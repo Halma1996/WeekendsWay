@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Main.qml</file>
+        <file>pages/MainPage.qml</file>
+        <file>pages/HomePage.qml</file>
+        <file>pages/FriendsPage.qml</file>
+        <file>pages/EatPage.qml</file>
+        <file>components/BigActionButton.qml</file>
+        <file>components/EditItemDialog.qml</file>
+        <file>components/Toast.qml</file>
+    </qresource>
+</RCC>

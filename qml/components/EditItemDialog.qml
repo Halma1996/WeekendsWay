@@ -1,5 +1,5 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 Dialog {
     id: dlg
@@ -61,7 +61,6 @@ Dialog {
         const a = (addressValue || "").trim()
         if (n.length === 0 || a.length === 0) {
             errorText.visible = true
-            // Dialog will close after accept; re-open to keep it visible.
             Qt.callLater(function(){ dlg.open() })
             return
         }

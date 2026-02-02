@@ -1,5 +1,5 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 Popup {
     id: root
@@ -7,7 +7,7 @@ Popup {
     focus: false
     closePolicy: Popup.NoAutoClose
 
-    // Текст тоста
+    // Текст уведомления
     property string message: ""
     // Длительность показа (мс)
     property int duration: 1800

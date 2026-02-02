@@ -14,11 +14,22 @@ Storage пишет в `QStandardPaths::AppDataLocation`.
 В приложении на страницах списков есть кнопка "Открыть данные (AppData)" — покажет путь.
 
 ## Заметки
-- `Navigator.openRoute(destination, travelMode)`:
-  - travelMode: "walking" | "driving" | "transit" | "bicycling" (для web Google Maps)
-- Android intent использует `google.navigation:q=...` (обычно открывает Google Maps).
-  Если на устройстве нет обработчика, используется web fallback.
+
+### Navigator
+`Navigator.openRoute(destination, travelMode)` открывает маршрут во внешнем навигаторе.
+
+`travelMode`:
+- `"walking"`, `"driving"`, `"transit"`, `"bicycling"`
+
+### Платформы
+- **Android**: intent `google.navigation:q=...`
+- **Desktop**: web fallback (открытие URL в браузере)
+
+Если на Android нет приложения-обработчика intent, используется web fallback.
 
 
-## Qt 5.12 compatibility
-This branch/template variant is adjusted to build with Qt 5.12.x (CMake min 3.10, find_package Qt 5.12).
+## Версия Qt
+
+Текущая версия проекта настроена под **Qt 5.15.2** (CMake + QML/Qt Quick Controls 2).
+
+Ранее проект запускался на Qt 5.12, но сейчас целевой набор — Qt 5.15.

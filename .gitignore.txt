@@ -32,3 +32,11 @@ Thumbs.db
 *.obj
 *.a
 *.lib
+
+# Local IDE / user settings
+.qtcreator/
+.vscode/
+.idea/
+
+# Build dir (explicit)
+build/

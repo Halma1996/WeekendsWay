@@ -54,10 +54,9 @@ bool Storage::saveJson(const QString& fileName, const QVariant& data) const
     QVariant normalized = normalizeForJson(data);
     QJsonDocument doc = QJsonDocument::fromVariant(normalized);
     if (doc.isNull()) {
-        if (doc.isNull()) {
-            qWarning() << "saveJson failed: cannot convert to JSON. type=" << normalized.typeName();
-            return false;
-        }
+        qWarning() << "saveJson failed: cannot convert to JSON. type=" << normalized.typeName();
+        return false;
+
     }
 
     QFile f(path);

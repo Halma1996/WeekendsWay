@@ -1,5 +1,0 @@
-D:/Projects/WeekendsWay/build/Qt_5_15_2_MinGw_64_bit-Debug/CMakeFiles/WeekendsWay.dir
-D:/Projects/WeekendsWay/build/Qt_5_15_2_MinGw_64_bit-Debug/CMakeFiles/edit_cache.dir
-D:/Projects/WeekendsWay/build/Qt_5_15_2_MinGw_64_bit-Debug/CMakeFiles/rebuild_cache.dir
-D:/Projects/WeekendsWay/build/Qt_5_15_2_MinGw_64_bit-Debug/CMakeFiles/WeekendsWay_autogen_timestamp_deps.dir
-D:/Projects/WeekendsWay/build/Qt_5_15_2_MinGw_64_bit-Debug/CMakeFiles/WeekendsWay_autogen.dir

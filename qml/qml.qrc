@@ -8,5 +8,6 @@
         <file>components/BigActionButton.qml</file>
         <file>components/EditItemDialog.qml</file>
         <file>components/Toast.qml</file>
+        <file>utils/StorageHelpers.js</file>
     </qresource>
 </RCC>

@@ -1,9 +1,10 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import App 1.0
 import "../components"
+import "../utils/StorageHelpers.js" as SH
 
 Page {
     id: root
@@ -23,7 +24,10 @@ Page {
 
             ToolButton {
                 text: "\u25C0"
-                onClicked: if (root.stack) root.stack.pop()
+                onClicked: {
+                        if (root.StackView.view) root.StackView.view.pop()
+                        else if (root.stack) root.stack.pop()
+                    }
             }
 
             Label {
@@ -64,31 +68,15 @@ Page {
     }
 
     function save() {
-        var arr = []
-        for (var i = 0; i < venuesModel.count; ++i) {
-            var it = venuesModel.get(i)
-            var n = it && it.name !== undefined ? ("" + it.name).trim() : ""
-            var a = it && it.address !== undefined ? ("" + it.address).trim() : ""
-
-            if (n.length > 0 || a.length > 0) {
-                arr.push({ name: n, address: a })
-            }
-        }
+        var arr = SH.modelToArray(venuesModel)
+        arr = SH.normalizeNameAddressArray(arr)
         Storage.saveJson(fileName, arr)
     }
 
     function load() {
-        venuesModel.clear()
         var arr = Storage.loadJson(fileName, [])
-        if (!arr || arr.length === undefined) return
-
-        for (var i = 0; i < arr.length; ++i) {
-            var it = arr[i]
-            if (!it) continue
-            if (it && it.name && it.address) {
-                venuesModel.append({ name: it.name, address: it.address })
-            }
-        }
+        arr = SH.normalizeNameAddressArray(arr)
+        SH.arrayToModel(arr, venuesModel)
     }
 
     ListView {

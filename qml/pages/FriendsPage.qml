@@ -1,9 +1,10 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import App 1.0
 import "../components"
+import "../utils/StorageHelpers.js" as SH
 
 Page {
     id: root
@@ -23,7 +24,10 @@ Page {
 
             ToolButton {
                 text: "\u25C0"
-                onClicked: if (root.stack) root.stack.pop()
+                onClicked: {
+                        if (root.StackView.view) root.StackView.view.pop()
+                        else if (root.stack) root.stack.pop()
+                    }
             }
 
             Label {
@@ -64,37 +68,17 @@ Page {
     }
 
     function save() {
-        var arr = []
-        for (var i = 0; i < friendsModel.count; ++i) {
-            var it = friendsModel.get(i)
-            var n = it && it.name !== undefined ? ("" + it.name).trim() : ""
-            var a = it && it.address !== undefined ? ("" + it.address).trim() : ""
-
-            // не сохраняем полностью пустые строки
-            if (n.length > 0 || a.length > 0) {
-                arr.push({ name: n, address: a })
-            }
-        }
+        var arr = SH.modelToArray(friendsModel)
+        arr = SH.normalizeNameAddressArray(arr)
         Storage.saveJson(fileName, arr)
     }
 
     function load() {
-        friendsModel.clear()
         var arr = Storage.loadJson(fileName, [])
-        if (!arr || arr.length === undefined) return
-
-        for (var i = 0; i < arr.length; ++i) {
-            var it = arr[i]
-            if (!it) continue
-
-            var n = it.name !== undefined ? ("" + it.name).trim() : ""
-            var a = it.address !== undefined ? ("" + it.address).trim() : ""
-
-            if (n.length > 0 || a.length > 0) {
-                friendsModel.append({ name: n, address: a })
-            }
-        }
+        arr = SH.normalizeNameAddressArray(arr)
+        SH.arrayToModel(arr, friendsModel)
     }
+
 
     ListView {
         id: listView

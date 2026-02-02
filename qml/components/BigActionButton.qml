@@ -1,10 +1,10 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 Button {
     id: root
     property string subtitle: ""
-    property string emoji: ""     // simple, cross-platform icon placeholder
+    property string emoji: ""
 
     implicitHeight: 84
     font.pixelSize: 20

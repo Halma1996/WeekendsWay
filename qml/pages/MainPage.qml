@@ -24,23 +24,34 @@ Page {
         spacing: 14
 
         BigActionButton {
+            width: parent.width
             text: "Домой"
             subtitle: "Один адрес • открыть маршрут"
-            emoji: "🏠"
+            icon.source: "qrc:/icons/home.svg"
+            icon.width: 48
+            icon.height: 48
+            //emoji: "🏠"
             onClicked: root.goHome()
+
         }
 
         BigActionButton {
+            width: parent.width
             text: "К друзьям"
             subtitle: "Список • карточка • маршрут"
-            emoji: "👥"
+            icon.source: "qrc:/icons/friends.svg"
+            icon.width: 48
+            icon.height: 48
             onClicked: root.goFriends()
         }
 
         BigActionButton {
+            width: parent.width
             text: "Кушать"
             subtitle: "Список мест • открыть маршрут"
-            emoji: "🍴"
+            icon.source: "qrc:/icons/eat.svg"
+            icon.width: 48
+            icon.height: 48
             onClicked: root.goEat()
         }
 

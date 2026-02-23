@@ -58,7 +58,9 @@ Page {
 
         TextField {
             id: addrField
+            width: Math.max(implicitWidth, contentWidth + leftPadding + rightPadding)
             placeholderText: "Адрес / место"
+
         }
 
         Row {

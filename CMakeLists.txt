@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
   src/Storage.h
   src/Storage.cpp
   qml/qml.qrc
+  icons/home.svg
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

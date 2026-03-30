@@ -4,9 +4,10 @@
 #include <QUrl>
 #include <QUrlQuery>
 
-#if defined(Q_OS_ANDROID)
-  #include <QAndroidJniObject>
-  #include <QtAndroid>
+#ifdef Q_OS_ANDROID
+#include <QtAndroidExtras/QAndroidJniObject>
+#include <QtAndroidExtras/QtAndroid>
+#include <jni.h>
 #endif
 
 Navigator::Navigator(QObject* parent) : QObject(parent) {}

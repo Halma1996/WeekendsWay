@@ -9,5 +9,8 @@
         <file>components/EditItemDialog.qml</file>
         <file>components/Toast.qml</file>
         <file>utils/StorageHelpers.js</file>
+        <file>../icons/home.svg</file>
+        <file>../icons/eat.svg</file>
+        <file>../icons/friends.svg</file>
     </qresource>
 </RCC>

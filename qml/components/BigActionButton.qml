@@ -6,23 +6,24 @@ Button {
     property string subtitle: ""
     property string emoji: ""
 
+    implicitWidth: 360
     implicitHeight: 84
     font.pixelSize: 20
 
     contentItem: Item {
-        anchors.fill: parent
         Row {
             anchors.fill: parent
             anchors.margins: 16
             spacing: 14
-
-            Label {
-                visible: root.emoji.length > 0
-                text: root.emoji
-                font.pixelSize: 28
-                verticalAlignment: Text.AlignVCenter
+            Image {
+                source: root.icon.source
+                width: root.height * 0.42
+                height: root.height * 0.42
+                sourceSize: Qt.size(width, height)
+                fillMode: Image.PreserveAspectFit
+                visible: root.icon.source.toString().length > 0
+                anchors.verticalCenter:  parent.verticalCenter
             }
-
             Column {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 4

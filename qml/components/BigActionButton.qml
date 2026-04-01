@@ -17,8 +17,8 @@ Button {
             spacing: 14
             Image {
                 source: root.icon.source
-                width: root.icon.width > 0 ? root.icon.width : 24
-                height: root.icon.height > 0 ? root.icon.height : 24
+                width: root.height * 0.42
+                height: root.height * 0.42
                 sourceSize: Qt.size(width, height)
                 fillMode: Image.PreserveAspectFit
                 visible: root.icon.source.toString().length > 0

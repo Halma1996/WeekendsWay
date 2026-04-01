@@ -83,7 +83,7 @@ QVariant Storage::normalizeForJson(const QVariant &v)
     }
 
     // Рекурсивно нормализуем списки
-    if (v.type() == QVariant::List) {
+    if (v.typeId() == QMetaType::QVariantList) {
         QVariantList lst = v.toList();
         for (int i = 0; i < lst.size(); ++i)
             lst[i] = normalizeForJson(lst[i]);
@@ -91,7 +91,7 @@ QVariant Storage::normalizeForJson(const QVariant &v)
     }
 
     // Рекурсивно нормализуем map-ы
-    if (v.type() == QVariant::Map) {
+    if (v.typeId() == QMetaType::QVariantMap) {
         QVariantMap mp = v.toMap();
         for (auto it = mp.begin(); it != mp.end(); ++it)
             it.value() = normalizeForJson(it.value());

@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import "../components"
 
@@ -18,50 +19,65 @@ Page {
         }
     }
 
-    Column {
+    ColumnLayout {
+        id: contentColumn
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 14
+        anchors.margins: 12
+        spacing: 12
 
         BigActionButton {
-            width: parent.width
+            Layout.fillWidth: true
+            Layout.preferredHeight: contentColumn.height / 6
+
             text: "Домой"
             subtitle: "Один адрес • открыть маршрут"
-            icon.source: "qrc:/icons/home.svg"
-            icon.width: 48
-            icon.height: 48
-            //emoji: "🏠"
-            onClicked: root.goHome()
 
+            icon.source: "qrc:/icons/home.svg"
+
+            onClicked: root.goHome()
         }
 
         BigActionButton {
-            width: parent.width
+            Layout.fillWidth: true
+            Layout.preferredHeight: contentColumn.height / 6
+
             text: "К друзьям"
             subtitle: "Список • карточка • маршрут"
+
             icon.source: "qrc:/icons/friends.svg"
-            icon.width: 48
-            icon.height: 48
+
             onClicked: root.goFriends()
         }
 
         BigActionButton {
-            width: parent.width
+            Layout.fillWidth: true
+            Layout.preferredHeight: contentColumn.height / 6
+
             text: "Кушать"
             subtitle: "Список мест • открыть маршрут"
+
             icon.source: "qrc:/icons/eat.svg"
-            icon.width: 48
-            icon.height: 48
+
             onClicked: root.goEat()
         }
 
-        Rectangle { height: 1; width: parent.width; color: "#DDDDDD"; radius: 1; opacity: 0.8 }
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: "#DDDDDD"
+            radius: 1
+            opacity: 0.8
+        }
 
         Label {
+            Layout.fillWidth: true
             text: "Halma_app: я стараюсь, все будет работать, но это не точно"
-            //text: "Lean-MVP: все маршруты открываются во внешнем навигаторе. Карты внутри приложения — позже."
             wrapMode: Text.Wrap
             opacity: 0.75
+        }
+
+        Item {
+            Layout.fillHeight: true
         }
     }
 }

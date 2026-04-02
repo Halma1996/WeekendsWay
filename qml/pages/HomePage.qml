@@ -62,11 +62,13 @@ Page {
 
         }
 
-        Row {
+        RowLayout {
             spacing: 12
+            width: parent.width
 
             Button {
                 text: "Сохранить"
+                Layout.fillWidth: true
                 onClicked: {
                     var data = { name: nameField.text.trim(), address: addrField.text.trim() }
 
@@ -85,6 +87,7 @@ Page {
 
             Button {
                 text: "Маршрут"
+                Layout.fillWidth: true
                 enabled: addrField.text.trim().length > 0
                 onClicked: Navigator.openRoute(addrField.text.trim(), "transit")
             }
@@ -93,6 +96,7 @@ Page {
         Rectangle { height: 1; width: parent.width; color: "#DDDDDD"; opacity: 0.8 }
 
         Button {
+            width: parent.width
             text: "Сбросить"
             onClicked: {
                 Storage.removeFile(root.fileName)

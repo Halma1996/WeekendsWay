@@ -19,45 +19,37 @@ Page {
         }
     }
 
-    ColumnLayout {
-        id: contentColumn
+    ScrollView {
         anchors.fill: parent
-        anchors.margins: 12
-        spacing: 12
+        padding: 12
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
+
+        ColumnLayout {
+            id: contentColumn
+            width: parent.width
+            spacing: 12
 
         BigActionButton {
             Layout.fillWidth: true
-            Layout.preferredHeight: contentColumn.height / 6
-
             text: "Домой"
             subtitle: "Один адрес • открыть маршрут"
-
             icon.source: "qrc:/icons/home.svg"
-
             onClicked: root.goHome()
         }
 
         BigActionButton {
             Layout.fillWidth: true
-            Layout.preferredHeight: contentColumn.height / 6
-
             text: "К друзьям"
             subtitle: "Список • карточка • маршрут"
-
             icon.source: "qrc:/icons/friends.svg"
-
             onClicked: root.goFriends()
         }
 
         BigActionButton {
             Layout.fillWidth: true
-            Layout.preferredHeight: contentColumn.height / 6
-
             text: "Кушать"
             subtitle: "Список мест • открыть маршрут"
-
             icon.source: "qrc:/icons/eat.svg"
-
             onClicked: root.goEat()
         }
 
@@ -80,4 +72,5 @@ Page {
             Layout.fillHeight: true
         }
     }
+}
 }

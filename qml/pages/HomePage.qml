@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import App 1.0
+
 import "../components"
 
 Page {
@@ -22,11 +24,9 @@ Page {
             ToolButton {
                 text: "\u25C0"
                 onClicked: {
-                    onClicked: {
-                            if (root.StackView.view) root.StackView.view.pop()
-                            else if (root.stack) root.stack.pop()
-                        }
-                }
+                        if (root.StackView.view) root.StackView.view.pop()
+                        else if (root.stack) root.stack.pop()
+                    }
             }
 
             Label {

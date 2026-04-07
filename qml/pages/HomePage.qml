@@ -16,24 +16,25 @@ Page {
     Toast { id: toast }
 
     header: ToolBar {
-        RowLayout {
+        Item {
             anchors.fill: parent
             anchors.margins: 8
-            spacing: 8
 
-            ToolButton {
-                text: "\u25C0"
-                onClicked: {
+            ReturnButton {
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.leftMargin: 5
+                onBackRequested: {
                         if (root.StackView.view) root.StackView.view.pop()
                         else if (root.stack) root.stack.pop()
                     }
             }
 
             Label {
+                anchors.centerIn: parent
                 text: root.title
                 font.pixelSize: 18
                 font.bold: true
-                Layout.fillWidth: true
                 elide: Text.ElideRight
             }
         }

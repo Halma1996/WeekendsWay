@@ -14,7 +14,7 @@ ApplicationWindow {
     title: "WeekendsWay"
 
     Material.theme: Material.Light
-
+    Material.primary: "#00fa9e"
     StackView {
         id: stack
         anchors.fill: parent

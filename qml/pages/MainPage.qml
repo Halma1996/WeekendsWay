@@ -20,13 +20,15 @@ Page {
     }
 
     ScrollView {
+        id: scrollView
         anchors.fill: parent
         padding: 12
+        contentWidth: availableWidth
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
             id: contentColumn
-            width: parent.width
+            width: scrollView.availableWidth
             spacing: 12
 
         BigActionButton {

@@ -16,6 +16,7 @@ Page {
     Toast { id: toast }
 
     header: ToolBar {
+        Material.background: "#00fafa"
         Item {
             anchors.fill: parent
             anchors.margins: 8

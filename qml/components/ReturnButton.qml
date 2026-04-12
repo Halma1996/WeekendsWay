@@ -10,14 +10,17 @@ ToolButton {
     text: "\u2190"
 
     signal backRequested
+    background: Rectangle {
+        color: "transparent"
+    }
 
     onClicked: backRequested()
     contentItem: Text{
         text:control.text
         color:"#fff"
-        font.pixelSize: 40
+        font.pixelSize: 55
         horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignBottom
+        verticalAlignment: Text.AlignVCenter
     }
 
 }

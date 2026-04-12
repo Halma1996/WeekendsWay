@@ -12,5 +12,6 @@
         <file>../icons/home.svg</file>
         <file>../icons/eat.svg</file>
         <file>../icons/friends.svg</file>
+        <file>components/ReturnButton.qml</file>
     </qresource>
 </RCC>

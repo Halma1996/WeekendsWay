@@ -8,11 +8,13 @@ ApplicationWindow {
     id: win
     width: 420
     height: 760
+    minimumWidth: 360
+    minimumHeight: 640
     visible: true
     title: "WeekendsWay"
 
     Material.theme: Material.Light
-
+    Material.primary: "#00fa9e"
     StackView {
         id: stack
         anchors.fill: parent

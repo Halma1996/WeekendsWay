@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import App 1.0
+
 import "../components"
 
 Page {
@@ -14,26 +16,26 @@ Page {
     Toast { id: toast }
 
     header: ToolBar {
-        RowLayout {
+        Material.background: "#00fafa"
+        Item {
             anchors.fill: parent
             anchors.margins: 8
-            spacing: 8
 
-            ToolButton {
-                text: "\u25C0"
-                onClicked: {
-                    onClicked: {
-                            if (root.StackView.view) root.StackView.view.pop()
-                            else if (root.stack) root.stack.pop()
-                        }
-                }
+            ReturnButton {
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.leftMargin: 5
+                onBackRequested: {
+                        if (root.StackView.view) root.StackView.view.pop()
+                        else if (root.stack) root.stack.pop()
+                    }
             }
 
             Label {
+                anchors.centerIn: parent
                 text: root.title
                 font.pixelSize: 18
                 font.bold: true
-                Layout.fillWidth: true
                 elide: Text.ElideRight
             }
         }
@@ -62,11 +64,13 @@ Page {
 
         }
 
-        Row {
+        RowLayout {
             spacing: 12
+            width: parent.width
 
             Button {
                 text: "Сохранить"
+                Layout.fillWidth: true
                 onClicked: {
                     var data = { name: nameField.text.trim(), address: addrField.text.trim() }
 
@@ -85,6 +89,7 @@ Page {
 
             Button {
                 text: "Маршрут"
+                Layout.fillWidth: true
                 enabled: addrField.text.trim().length > 0
                 onClicked: Navigator.openRoute(addrField.text.trim(), "transit")
             }
@@ -93,6 +98,7 @@ Page {
         Rectangle { height: 1; width: parent.width; color: "#DDDDDD"; opacity: 0.8 }
 
         Button {
+            width: parent.width
             text: "Сбросить"
             onClicked: {
                 Storage.removeFile(root.fileName)

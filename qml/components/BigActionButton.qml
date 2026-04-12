@@ -6,8 +6,7 @@ Button {
     property string subtitle: ""
     property string emoji: ""
 
-    implicitWidth: 360
-    implicitHeight: 84
+    implicitHeight: 110
     font.pixelSize: 20
 
     contentItem: Item {

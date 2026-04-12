@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import App 1.0
+
 import "../components"
 import "../utils/StorageHelpers.js" as SH
 
@@ -16,30 +18,37 @@ Page {
     Toast { id: toast }
 
     header: ToolBar {
-        RowLayout {
+        Material.background: "#00fa19"
+
+        Item {
             anchors.fill: parent
             anchors.margins: 8
-            spacing: 8
 
-            ToolButton {
-                text: "\u25C0"
-                onClicked: {
+            ReturnButton {
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.leftMargin: 5
+
+                onBackRequested: {
                         if (root.StackView.view) root.StackView.view.pop()
                         else if (root.stack) root.stack.pop()
                     }
             }
 
             Label {
+                anchors.centerIn: parent
                 text: root.title
                 font.pixelSize: 18
                 font.bold: true
-                verticalAlignment: Text.AlignVCenter
-                Layout.fillWidth: true
                 elide: Text.ElideRight
             }
 
             ToolButton {
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 5
                 text: "+"
+                font.pixelSize: 24
                 onClicked: {
                     editDlg.titleText = "Добавить друга"
                     editDlg.nameValue = ""

@@ -6,6 +6,7 @@
 #include "Navigator.h"
 #include "Storage.h"
 
+/// сигнатура ф-ций для использования в qmlRegisterSingletonType
 static QObject* navigator_provider(QQmlEngine*, QJSEngine*)
 {
     return new Navigator();
@@ -21,11 +22,9 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    // force Material style for consistent look across platforms.
     QQuickStyle::setStyle("Material");
 
-    // Register C++ singletons in QML as:
-
+    // Регистрируем с++ синглтоны в qml
     qmlRegisterSingletonType<Navigator>("App", 1, 0, "Navigator", navigator_provider);
     qmlRegisterSingletonType<Storage>("App", 1, 0, "Storage", storage_provider);
 

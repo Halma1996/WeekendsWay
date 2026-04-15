@@ -1,5 +1,6 @@
 .pragma library
 
+// Преобразует ListModel в обычный JS-массив
 function modelToArray(model) {
     var arr = []
     for (var i = 0; i < model.count; ++i) {
@@ -8,6 +9,7 @@ function modelToArray(model) {
     return arr
 }
 
+// Заполняет ListModel данными из массива
 function arrayToModel(arr, model) {
     model.clear()
     if (!arr || arr.length === undefined) return
@@ -16,6 +18,7 @@ function arrayToModel(arr, model) {
     }
 }
 
+// Нормализует массив объектов вида { name, address } и убирает пустые записи
 function normalizeNameAddressArray(arr) {
     var out = []
     if (!arr || arr.length === undefined) return out

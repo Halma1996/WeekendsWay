@@ -19,7 +19,6 @@ QString Storage::appDataPath() const
 
 static QString resolvePath(const QString& baseDir, const QString& fileName)
 {
-    // fileName like "friends.json"
     return QDir(baseDir).filePath(fileName);
 }
 
@@ -75,28 +74,28 @@ bool Storage::removeFile(const QString& fileName) const
     return QFile::remove(path);
 }
 
-QVariant Storage::normalizeForJson(const QVariant &v)
+QVariant Storage::normalizeForJson(const QVariant &jsonValue)
 {
-    // Если прилетел QJSValue (часто из QML), конвертируем в обычный QVariant
-    if (v.userType() == qMetaTypeId<QJSValue>()) {
-        return normalizeForJson(v.value<QJSValue>().toVariant());
+    // Если прилетел QJSValue , конвертируем в обычный QVariant
+    if (jsonValue.userType() == qMetaTypeId<QJSValue>()) {
+        return normalizeForJson(jsonValue.value<QJSValue>().toVariant());
     }
 
     // Рекурсивно нормализуем списки
-    if (v.typeId() == QMetaType::QVariantList) {
-        QVariantList lst = v.toList();
+    if (jsonValue.typeId() == QMetaType::QVariantList) {
+        QVariantList lst = jsonValue.toList();
         for (int i = 0; i < lst.size(); ++i)
             lst[i] = normalizeForJson(lst[i]);
         return lst;
     }
 
     // Рекурсивно нормализуем map-ы
-    if (v.typeId() == QMetaType::QVariantMap) {
-        QVariantMap mp = v.toMap();
+    if (jsonValue.typeId() == QMetaType::QVariantMap) {
+        QVariantMap mp = jsonValue.toMap();
         for (auto it = mp.begin(); it != mp.end(); ++it)
             it.value() = normalizeForJson(it.value());
         return mp;
     }
 
-    return v;
+    return jsonValue;
 }

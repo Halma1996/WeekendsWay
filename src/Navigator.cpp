@@ -4,6 +4,11 @@
 #include <QUrl>
 #include <QUrlQuery>
 
+Navigator::Navigator(QObject* parent)
+    : QObject(parent)
+{
+}
+
 static QUrl googleMapsDirectionsUrl(const QString& destination, const QString& travelMode)
 {
     QUrl url("https://www.google.com/maps/dir/");

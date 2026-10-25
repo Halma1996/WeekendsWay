@@ -3,10 +3,13 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QFile>
+#include <QSaveFile>
 #include <QJsonDocument>
 #include <QDebug>
 #include <QMetaType>
 #include <QJSValue>
+#include <QGuiApplication>
+#include <QClipboard>
 
 Storage::Storage(QObject* parent) : QObject(parent) {}
 
@@ -58,12 +61,24 @@ bool Storage::saveJson(const QString& fileName, const QVariant& data) const
 
     }
 
-    QFile f(path);
-    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    QSaveFile f(path);
+    if (!f.open(QIODevice::WriteOnly))
         return false;
 
-    f.write(doc.toJson(QJsonDocument::Indented));
-    f.close();
+    const QByteArray bytes = doc.toJson(QJsonDocument::Indented);
+    if (f.write(bytes) != bytes.size()) {
+        f.cancelWriting();
+        return false;
+    }
+    return f.commit();
+}
+
+bool Storage::copyToClipboard(const QString& text) const
+{
+    if (text.isEmpty() || !QGuiApplication::clipboard())
+        return false;
+
+    QGuiApplication::clipboard()->setText(text);
     return true;
 }
 

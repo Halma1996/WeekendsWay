@@ -35,6 +35,9 @@ public:
     /// \param fileName
     /// \return
     ///
+    /// Копирует текст в системный буфер обмена.
+    Q_INVOKABLE bool copyToClipboard(const QString& text) const;
+
     Q_INVOKABLE bool removeFile(const QString& fileName) const;
 
 private:

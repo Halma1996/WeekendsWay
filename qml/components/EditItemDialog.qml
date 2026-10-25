@@ -5,6 +5,7 @@ Dialog {
     id: dlg
     modal: true
     standardButtons: Dialog.Ok | Dialog.Cancel
+    closePolicy: Popup.CloseOnEscape
 
     // Generic "item editor" for { name, address }
     property string titleText: "Edit item"
@@ -17,6 +18,7 @@ Dialog {
     width: Math.min(420, parent ? parent.width * 0.92 : 420)
 
     Column {
+        width: dlg.availableWidth
         spacing: 12
         padding: 16
 
@@ -30,6 +32,7 @@ Dialog {
 
         TextField {
             id: nameField
+            width: parent.width
             placeholderText: "Название"
             text: dlg.nameValue
             onTextChanged: {
@@ -40,6 +43,7 @@ Dialog {
 
         TextField {
             id: addrField
+            width: parent.width
             placeholderText: "Адрес / место"
             text: dlg.addressValue
             onTextChanged: {
@@ -56,12 +60,14 @@ Dialog {
         }
     }
 
+    onAboutToShow: errorText.visible = false
+
     onAccepted: {
         const n = (nameValue || "").trim()
         const a = (addressValue || "").trim()
         if (n.length === 0 || a.length === 0) {
             errorText.visible = true
-            Qt.callLater(function(){ dlg.open() })
+            Qt.callLater(function() { dlg.open() })
             return
         }
         acceptedWith(n, a)

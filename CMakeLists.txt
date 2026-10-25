@@ -27,6 +27,7 @@ qt_add_executable(WeekendsWay
 if(ANDROID)
     set_target_properties(WeekendsWay PROPERTIES
         QT_ANDROID_TARGET_SDK_VERSION 35
+        QT_ANDROID_SDK_BUILD_TOOLS_REVISION 35.0.0
     )
 endif()
 

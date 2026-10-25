@@ -53,13 +53,14 @@ Page {
         }
 
         TextField {
+            width: parent.width
             id: nameField
             placeholderText: "Название (например, Дом)"
         }
 
         TextField {
             id: addrField
-            width: Math.max(implicitWidth, contentWidth + leftPadding + rightPadding)
+            width: parent.width
             placeholderText: "Адрес / место"
 
         }
@@ -91,7 +92,10 @@ Page {
                 text: "Маршрут"
                 Layout.fillWidth: true
                 enabled: addrField.text.trim().length > 0
-                onClicked: Navigator.openRoute(addrField.text.trim(), "transit")
+                onClicked: {
+                    if (!Navigator.openRoute(addrField.text.trim(), "transit"))
+                        toast.show("Не удалось открыть карты")
+                }
             }
         }
 

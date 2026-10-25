@@ -79,7 +79,8 @@ Page {
     function save() {
         var arr = SH.modelToArray(venuesModel)
         arr = SH.normalizeNameAddressArray(arr)
-        Storage.saveJson(fileName, arr)
+        if (!Storage.saveJson(fileName, arr))
+            toast.show("Ошибка сохранения")
     }
 
     function load() {
@@ -123,7 +124,10 @@ Page {
                 ToolButton {
                     id: routeBtn
                     text: "🧭"
-                    onClicked: Navigator.openRoute(address, "walking")
+                    onClicked: {
+                        if (!Navigator.openRoute(address, "walking"))
+                            toast.show("Не удалось открыть карты")
+                    }
                 }
 
                 ToolButton {

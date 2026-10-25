@@ -53,6 +53,9 @@ Page {
                     editDlg.titleText = "Добавить друга"
                     editDlg.nameValue = ""
                     editDlg.addressValue = ""
+                    editDlg.intercomValue = ""
+                    editDlg.floorValue = ""
+                    editDlg.apartmentValue = ""
                     editDlg._editIndex = -1
                     editDlg.open()
                 }
@@ -60,30 +63,50 @@ Page {
         }
     }
 
-    EditItemDialog {
+    EditFriendDialog {
         id: editDlg
         property int _editIndex: -1
 
-        onAcceptedWith: function(n, a) {
-            if (_editIndex < 0) {
-                friendsModel.append({ name: n, address: a })
-            } else {
-                friendsModel.set(_editIndex, { name: n, address: a })
-            }
+        onAcceptedWith: function(n, a, intercom, floor, apartment) {
+            var item = { name: n, address: a, intercom: intercom,
+                         floor: floor, apartment: apartment }
+            if (_editIndex < 0)
+                friendsModel.append(item)
+            else
+                friendsModel.set(_editIndex, item)
             save()
-            toast.show("Сохранено")
         }
+    }
+
+    function normalizeFriends(arr) {
+        var result = []
+        if (!arr || arr.length === undefined) return result
+        for (var i = 0; i < arr.length; ++i) {
+            var item = arr[i]
+            if (!item) continue
+            var n = String(item.name === undefined ? "" : item.name).trim()
+            var a = String(item.address === undefined ? "" : item.address).trim()
+            if (!n && !a) continue
+            result.push({
+                name: n, address: a,
+                intercom: String(item.intercom == null ? "" : item.intercom),
+                floor: String(item.floor == null ? "" : item.floor),
+                apartment: String(item.apartment == null ? "" : item.apartment)
+            })
+        }
+        return result
     }
 
     function save() {
         var arr = SH.modelToArray(friendsModel)
-        arr = SH.normalizeNameAddressArray(arr)
-        Storage.saveJson(fileName, arr)
+        arr = normalizeFriends(arr)
+        if (!Storage.saveJson(fileName, arr))
+            toast.show("Ошибка сохранения")
     }
 
     function load() {
         var arr = Storage.loadJson(fileName, [])
-        arr = SH.normalizeNameAddressArray(arr)
+        arr = normalizeFriends(arr)
         SH.arrayToModel(arr, friendsModel)
     }
 
@@ -99,52 +122,135 @@ Page {
         header: Item { width: 1; height: 16 }
 
         delegate: Rectangle {
+            id: friendCard
             x: 16
             width: ListView.view.width - 32
-            height: 72
+            height: cardContent.implicitHeight + 24
             radius: 12
             color: "#F7F7F7"
             border.color: "#E0E0E0"
 
-            Row {
-                anchors.fill: parent
-                anchors.margins: 12
-                spacing: 12
+            // Keep the expanded state local to each visible card.
+            property bool expanded: false
+            readonly property bool hasDetails: intercom.length > 0 || floor.length > 0 || apartment.length > 0
 
-                Column {
-                    width: parent.width - routeBtn.width - editBtn.width - delBtn.width - 36
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 2
+            Behavior on height { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
-                    Label { text: name; font.bold: true; elide: Text.ElideRight }
-                    Label { text: address; opacity: 0.7; font.pixelSize: 12; elide: Text.ElideRight }
-                }
+            ColumnLayout {
+                id: cardContent
+                x: 12
+                y: 12
+                width: parent.width - 24
+                spacing: 6
 
-                ToolButton {
-                    id: routeBtn
-                    text: "🧭"
-                    onClicked: Navigator.openRoute(address, "transit")
-                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 6
 
-                ToolButton {
-                    id: editBtn
-                    text: "✏️"
-                    onClicked: {
-                        editDlg.titleText = "Редактировать друга"
-                        editDlg.nameValue = name
-                        editDlg.addressValue = address
-                        editDlg._editIndex = index
-                        editDlg.open()
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+
+                        Label {
+                            Layout.fillWidth: true
+                            text: name
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+                        Label {
+                            Layout.fillWidth: true
+                            text: address
+                            opacity: 0.7
+                            font.pixelSize: 12
+                            elide: Text.ElideRight
+                        }
+                    }
+
+                    ToolButton {
+                        text: "🧭"
+                        Accessible.name: "Построить маршрут к " + name
+                        onClicked: {
+                            if (!Navigator.openRoute(address, "transit"))
+                                toast.show("Не удалось открыть карты")
+                        }
+                    }
+                    ToolButton {
+                        text: friendCard.expanded ? "⌃" : "⌄"
+                        Accessible.name: friendCard.expanded ? "Свернуть карточку" : "Раскрыть карточку"
+                        onClicked: friendCard.expanded = !friendCard.expanded
                     }
                 }
 
-                ToolButton {
-                    id: delBtn
-                    text: "🗑️"
-                    onClicked: {
-                        friendsModel.remove(index)
-                        save()
-                        toast.show("Удалено")
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    visible: friendCard.expanded
+                    spacing: 4
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        visible: intercom.length > 0
+                        Label {
+                            Layout.fillWidth: true
+                            text: "Домофон: " + intercom
+                            font.pixelSize: 13
+                            wrapMode: Text.WrapAnywhere
+                        }
+                        ToolButton {
+                            text: "⧉"
+                            Accessible.name: "Скопировать ключ домофона"
+                            onClicked: {
+                                if (Storage.copyToClipboard(intercom))
+                                    toast.show("Ключ домофона скопирован")
+                                else
+                                    toast.show("Не удалось скопировать ключ")
+                            }
+                        }
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        visible: floor.length > 0
+                        text: "Этаж: " + floor
+                        font.pixelSize: 13
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        visible: apartment.length > 0
+                        text: "Квартира: " + apartment
+                        font.pixelSize: 13
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        visible: !friendCard.hasDetails
+                        text: "Дополнительная информация не указана"
+                        opacity: 0.65
+                        font.pixelSize: 12
+                        wrapMode: Text.Wrap
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Item { Layout.fillWidth: true }
+                        Button {
+                            text: "Изменить"
+                            onClicked: {
+                                editDlg.titleText = "Редактировать друга"
+                                editDlg.nameValue = name
+                                editDlg.addressValue = address
+                                editDlg.intercomValue = intercom
+                                editDlg.floorValue = floor
+                                editDlg.apartmentValue = apartment
+                                editDlg._editIndex = index
+                                editDlg.open()
+                            }
+                        }
+                        Button {
+                            text: "Удалить"
+                            onClicked: {
+                                friendsModel.remove(index)
+                                save()
+                                toast.show("Удалено")
+                            }
+                        }
                     }
                 }
             }

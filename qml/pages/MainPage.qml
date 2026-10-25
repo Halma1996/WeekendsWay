@@ -65,7 +65,7 @@ Page {
 
         Label {
             Layout.fillWidth: true
-            text: "Halma_app: я стараюсь, все будет работать, но это не точно"
+            text: "Выбери место — и построй маршрут в пару касаний."
             wrapMode: Text.Wrap
             opacity: 0.75
         }

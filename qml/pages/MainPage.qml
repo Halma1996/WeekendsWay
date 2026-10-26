@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import App 1.0
 import "../components"
 
 Page {
@@ -61,6 +62,15 @@ Page {
                     font.pixelSize: 13
                     wrapMode: Text.Wrap
                 }
+            }
+            ActionButton {
+                objectName: "mapDefaultsButton"
+                Layout.fillWidth: true
+                visible: Navigator.mapChoiceSupported
+                text: "Карты: " + Navigator.defaultMapName
+                font.pixelSize: 13
+                Accessible.name: "Выбрать приложение карт по умолчанию"
+                onClicked: Navigator.chooseDefaultMap()
             }
         }
     }

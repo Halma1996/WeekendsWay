@@ -8,3 +8,8 @@ target_include_directories(navigator-tests PRIVATE ../../src)
 target_link_libraries(navigator-tests PRIVATE Qt6::Core Qt6::Gui Qt6::Test)
 enable_testing()
 add_test(NAME map-selection COMMAND navigator-tests)
+
+add_executable(taxi-tests test-taxi.cpp ../../src/Taxi.cpp ../../src/TaxiLinks.cpp)
+target_include_directories(taxi-tests PRIVATE ../../src)
+target_link_libraries(taxi-tests PRIVATE Qt6::Core Qt6::Gui Qt6::Test)
+add_test(NAME taxi-destinations COMMAND taxi-tests)

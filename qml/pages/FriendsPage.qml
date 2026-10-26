@@ -233,8 +233,13 @@ Page {
                         }
                     }
                     IconAction {
-                        text: friendCard.expanded ? "⌃" : "⌄"
-                        font.pixelSize: 22
+                        objectName: "friendDetailsButton"
+                        display: AbstractButton.IconOnly
+                        icon.source: "qrc:/icons/edit.png"
+                        icon.color: "transparent"
+                        icon.width: 36
+                        icon.height: 36
+                        padding: 6
                         Accessible.name: friendCard.expanded ? "Свернуть карточку" : "Раскрыть карточку"
                         onClicked: friendCard.expanded = !friendCard.expanded
                     }

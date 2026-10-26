@@ -16,6 +16,8 @@ set(APP_SOURCES
     src/Navigator.cpp
     src/Storage.h
     src/Storage.cpp
+    src/Contacts.h
+    src/Contacts.cpp
     qml/qml.qrc
     icons/home.svg
 )
@@ -28,6 +30,7 @@ if(ANDROID)
     set_target_properties(WeekendsWay PROPERTIES
         QT_ANDROID_TARGET_SDK_VERSION 35
         QT_ANDROID_SDK_BUILD_TOOLS_REVISION 35.0.0
+        QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"
     )
 endif()
 

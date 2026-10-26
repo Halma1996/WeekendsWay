@@ -66,17 +66,31 @@ jobs:
           cmake --build build-navigation-tests --parallel 2
           ctest --test-dir build-navigation-tests --output-on-failure
 
-      - name: Restore test signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: weekendsway-android-debug-keystore-v1
+      - name: Test contact search with composing keyboard input
+        shell: bash
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QT_QUICK_BACKEND: software
+        run: |
+          python3 -m venv "$RUNNER_TEMP/ui-tests"
+          "$RUNNER_TEMP/ui-tests/bin/pip" install 'PySide6-Essentials==6.8.3'
+          "$RUNNER_TEMP/ui-tests/bin/python" tests/ui/test_contacts_search.py
 
       - name: Configure
         shell: bash
         run: |
+          # Every new run and retry has a higher code within this workflow.
+          # A rerun of an older run remains an older version.
+          if (( GITHUB_RUN_ATTEMPT >= 100 )); then
+            echo "Too many retries for the version-code range"
+            exit 1
+          fi
+          version_code=$((1000000 + GITHUB_RUN_NUMBER * 100 + GITHUB_RUN_ATTEMPT))
+          echo "WEEKENDSWAY_VERSION_CODE=$version_code" >> "$GITHUB_ENV"
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Debug \
+            -DWEEKENDSWAY_VERSION_CODE="$version_code" \
+            -DWEEKENDSWAY_VERSION_NAME="1.1.${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}" \
             -DCMAKE_TOOLCHAIN_FILE="$QT_ROOT_DIR/lib/cmake/Qt6/qt.toolchain.cmake" \
             -DQT_HOST_PATH="$QT_HOST_PATH" \
             -DANDROID_SDK_ROOT="$ANDROID_HOME" \
@@ -86,22 +100,26 @@ jobs:
       - name: Build APK
         run: cmake --build build --target apk --parallel 2
 
-      - name: Verify and collect APK
+      - name: Sign and verify update-compatible APK
         shell: bash
+        env:
+          WEEKENDSWAY_SIGNING_JSON: ${{ secrets.WEEKENDSWAY_SIGNING_JSON }}
         run: |
           mapfile -t apks < <(find build -type f -path '*/outputs/apk/debug/*.apk' | sort)
           if [[ ${#apks[@]} -ne 1 ]]; then
             echo "Expected one debug APK, found ${#apks[@]}"
             exit 1
           fi
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "${apks[0]}"
-          mkdir -p dist
-          cp "${apks[0]}" dist/WeekendsWay-arm64-v8a-debug.apk
+          python3 scripts/sign_android_apk.py \
+            --input "${apks[0]}" --output dist/WeekendsWay-arm64-v8a.apk \
+            --apksigner "$ANDROID_HOME/build-tools/35.0.0/apksigner" \
+            --aapt "$ANDROID_HOME/build-tools/35.0.0/aapt" \
+            --version-code "$WEEKENDSWAY_VERSION_CODE"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: WeekendsWay-android-arm64-apk
-          path: dist/WeekendsWay-arm64-v8a-debug.apk
+          path: dist/WeekendsWay-arm64-v8a.apk
           if-no-files-found: error
           retention-days: 30

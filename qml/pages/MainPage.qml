@@ -6,6 +6,7 @@ import "../components"
 
 Page {
     id: root
+    implicitWidth: 360
     signal goHome()
     signal goFriends()
     signal goEat()
@@ -35,7 +36,7 @@ Page {
             Layout.fillWidth: true
             text: "Домой"
             subtitle: "Один адрес • открыть маршрут"
-            icon.source: "qrc:/icons/home.svg"
+            icon.source: "qrc:/icons/home.png"
             onClicked: root.goHome()
         }
 
@@ -43,7 +44,7 @@ Page {
             Layout.fillWidth: true
             text: "К друзьям"
             subtitle: "Список • карточка • маршрут"
-            icon.source: "qrc:/icons/friends.svg"
+            icon.source: "qrc:/icons/friends.png"
             onClicked: root.goFriends()
         }
 
@@ -51,7 +52,7 @@ Page {
             Layout.fillWidth: true
             text: "Кушать"
             subtitle: "Список мест • открыть маршрут"
-            icon.source: "qrc:/icons/eat.svg"
+            icon.source: "qrc:/icons/eat.png"
             onClicked: root.goEat()
         }
 

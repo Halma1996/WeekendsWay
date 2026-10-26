@@ -11,12 +11,13 @@ Dialog {
 
     property string titleText: "Добавить друга"
     property string nameValue: ""
+    property string phoneValue: ""
     property string addressValue: ""
     property string intercomValue: ""
     property string floorValue: ""
     property string apartmentValue: ""
 
-    signal acceptedWith(string name, string address, string intercom, string floor, string apartment)
+    signal acceptedWith(string name, string address, string intercom, string floor, string apartment, string phone)
 
     contentItem: Flickable {
         implicitHeight: Math.min(fields.implicitHeight + 24, 390)
@@ -36,7 +37,7 @@ Dialog {
                 width: parent.width
                 visible: false
                 color: "#B00020"
-                text: "Укажи имя и адрес"
+                text: "Укажи имя"
             }
             TextField {
                 width: parent.width
@@ -46,9 +47,16 @@ Dialog {
             }
             TextField {
                 width: parent.width
-                placeholderText: "Адрес *"
+                placeholderText: "Адрес для маршрута"
                 text: dlg.addressValue
                 onTextChanged: { dlg.addressValue = text; errorText.visible = false }
+            }
+            TextField {
+                width: parent.width
+                placeholderText: "Телефон"
+                text: dlg.phoneValue
+                inputMethodHints: Qt.ImhDialableCharactersOnly
+                onTextChanged: dlg.phoneValue = text
             }
             TextField {
                 width: parent.width
@@ -71,7 +79,7 @@ Dialog {
             }
             Label {
                 width: parent.width
-                text: "* Обязательные поля. Остальные можно заполнить позже."
+                text: "* Имя обязательно. Адрес нужен для маршрута, его можно добавить позже."
                 font.pixelSize: 12
                 opacity: 0.65
                 wrapMode: Text.Wrap
@@ -83,11 +91,11 @@ Dialog {
     onAccepted: {
         var n = nameValue.trim()
         var a = addressValue.trim()
-        if (!n || !a) {
+        if (!n) {
             errorText.visible = true
             Qt.callLater(function() { dlg.open() })
             return
         }
-        acceptedWith(n, a, intercomValue.trim(), floorValue.trim(), apartmentValue.trim())
+        acceptedWith(n, a, intercomValue.trim(), floorValue.trim(), apartmentValue.trim(), phoneValue.trim())
     }
 }

@@ -25,6 +25,7 @@
         <file alias="icons/home.png">../icons/home.png</file>
         <file alias="icons/eat.png">../icons/eat.png</file>
         <file alias="icons/friends.png">../icons/friends.png</file>
+        <file alias="icons/edit.png">../icons/edit.png</file>
         <file>../icons/route.svg</file>
         <file>../icons/trash.svg</file>
         <file>components/ReturnButton.qml</file>

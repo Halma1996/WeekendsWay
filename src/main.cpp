@@ -6,6 +6,7 @@
 #include "Navigator.h"
 #include "Storage.h"
 #include "Contacts.h"
+#include "Taxi.h"
 
 /// сигнатура ф-ций для использования в qmlRegisterSingletonType
 static QObject* navigator_provider(QQmlEngine*, QJSEngine*)
@@ -23,6 +24,11 @@ static QObject* contacts_provider(QQmlEngine*, QJSEngine*)
     return new Contacts();
 }
 
+static QObject* taxi_provider(QQmlEngine*, QJSEngine*)
+{
+    return new Taxi();
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -34,6 +40,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<Navigator>("App", 1, 0, "Navigator", navigator_provider);
     qmlRegisterSingletonType<Storage>("App", 1, 0, "Storage", storage_provider);
     qmlRegisterSingletonType<Contacts>("App", 1, 0, "Contacts", contacts_provider);
+    qmlRegisterSingletonType<Taxi>("App", 1, 0, "Taxi", taxi_provider);
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/Main.qml"));

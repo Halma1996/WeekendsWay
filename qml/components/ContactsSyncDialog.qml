@@ -4,7 +4,7 @@ import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.15
 import App 1.0
 
-Dialog {
+StyledDialog {
     id: dlg
     objectName: "contactsSyncDialog"
     parent: Overlay.overlay
@@ -14,19 +14,21 @@ Dialog {
     modal: true
     title: "Синхронизация контактов"
     closePolicy: Popup.CloseOnEscape
-    padding: 16
-    Material.accent: "#176B50"
+    readonly property bool compact: height < 520
+    padding: compact ? 12 : 16
+    Material.accent: Theme.purple
 
-    background: Rectangle { color: "#FFFFFF"; radius: 20 }
+    background: Rectangle { color: Theme.surface; radius: 24; border.color: Theme.border }
     header: Label {
         text: dlg.title
-        font.pixelSize: 22
+        color: Theme.text
+        font.pixelSize: dlg.compact ? 18 : 22
         font.bold: true
         wrapMode: Text.Wrap
         leftPadding: 16
         rightPadding: 16
-        topPadding: 18
-        bottomPadding: 10
+        topPadding: dlg.compact ? 12 : 20
+        bottomPadding: dlg.compact ? 4 : 10
     }
 
     property var allContacts: []
@@ -112,44 +114,36 @@ Dialog {
     }
 
     contentItem: ColumnLayout {
-        spacing: 10
+        spacing: dlg.compact ? 4 : 10
         Label {
+            visible: !dlg.compact
             Layout.fillWidth: true
             text: "Добавим имена, телефоны и адреса, если они есть. Данные на телефоне не изменятся."
             wrapMode: Text.Wrap
             font.pixelSize: 14
-            opacity: 0.8
+            color: Theme.muted
         }
         ColumnLayout {
             Layout.fillWidth: true
             visible: !dlg.listReady && !Contacts.busy
             spacing: 6
-            Button {
+            ActionButton {
                 id: allButton
                 objectName: "syncAllContactsButton"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 54
                 text: "Все контакты"
-                highlighted: true
+                tone: "purple"
                 enabled: Contacts.supported
-                background: Rectangle {
-                    radius: 12
-                    color: allButton.down ? "#10513C" : "#176B50"
-                }
                 onClicked: dlg.begin(true)
             }
-            Button {
+            ActionButton {
                 id: chooseButton
                 objectName: "chooseContactsButton"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 54
                 text: "Выбрать контакты"
                 enabled: Contacts.supported
-                Material.foreground: "#176B50"
-                background: Rectangle {
-                    radius: 12
-                    color: chooseButton.down ? "#D0E9DC" : "#E5F3EA"
-                }
                 onClicked: dlg.begin(false)
             }
             Label {
@@ -157,7 +151,7 @@ Dialog {
                 text: "Android запросит доступ к контактам. Затем можно проверить список и подтвердить синхронизацию."
                 wrapMode: Text.Wrap
                 font.pixelSize: 12
-                opacity: 0.65
+                color: Theme.muted
             }
         }
         Label {
@@ -176,15 +170,18 @@ Dialog {
             Layout.fillWidth: true
             visible: text.length > 0
             text: dlg.resultError || Contacts.error
-            color: "#B3261E"
+            color: Theme.danger
             wrapMode: Text.Wrap
             font.pixelSize: 13
         }
-        TextField {
+        InputField {
             id: searchField
             objectName: "contactsSearchField"
             Layout.fillWidth: true
             visible: dlg.listReady && dlg.allContacts.length > 0
+            implicitHeight: dlg.compact ? 44 : 54
+            topPadding: dlg.compact ? 8 : 14
+            bottomPadding: dlg.compact ? 8 : 14
             placeholderText: "Имя или телефон"
             onTextChanged: if (dlg.listReady) dlg.filterContacts()
         }
@@ -240,7 +237,7 @@ Dialog {
                         width: parent.width - 42
                         text: model.address || "Адрес можно добавить позже"
                         font.pixelSize: 12
-                        opacity: 0.65
+                        color: Theme.muted
                         elide: Text.ElideRight
                     }
                 }
@@ -261,29 +258,29 @@ Dialog {
         Item { Layout.fillHeight: true; visible: !dlg.listReady || dlg.allContacts.length === 0 }
         Label {
             Layout.fillWidth: true
-            visible: dlg.listReady && dlg.allContacts.length > 0
+            visible: !dlg.compact && dlg.listReady && dlg.allContacts.length > 0
             text: "Повторная синхронизация обновит связанные записи. Ваши правки и дополнительные данные сохранятся."
             wrapMode: Text.Wrap
             font.pixelSize: 12
-            opacity: 0.65
+            color: Theme.muted
         }
     }
 
     footer: Item {
-        implicitHeight: 68
+        implicitHeight: dlg.compact ? 58 : 74
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 16
             anchors.rightMargin: 16
             anchors.bottomMargin: 10
             spacing: 8
-            Button {
+            ActionButton {
                 text: "Отмена"
                 flat: true
                 Layout.preferredHeight: 50
                 onClicked: dlg.close()
             }
-            Button {
+            ActionButton {
                 id: confirmButton
                 objectName: "confirmContactsSyncButton"
                 Layout.fillWidth: true
@@ -293,13 +290,8 @@ Dialog {
                 font.pixelSize: 14
                 leftPadding: 10
                 rightPadding: 10
-                highlighted: true
+                tone: "purple"
                 enabled: dlg.selectedCount > 0 && !Contacts.busy
-                background: Rectangle {
-                    radius: 12
-                    color: !confirmButton.enabled ? "#E2E5E2"
-                          : confirmButton.down ? "#10513C" : "#176B50"
-                }
                 onClicked: dlg.submitSelection()
             }
         }

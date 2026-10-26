@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: root
-    color: "#FFF8EC"
+    color: Theme.background
     visible: opacity > 0
     opacity: 1
 
@@ -76,7 +76,7 @@ Rectangle {
         Label {
             width: parent.width
             text: "WeekendsWay"
-            color: "#392C20"
+            color: Theme.text
             font.pixelSize: 26
             font.weight: Font.DemiBold
             horizontalAlignment: Text.AlignHCenter
@@ -85,7 +85,7 @@ Rectangle {
         Label {
             width: parent.width
             text: "Хороших выходных!"
-            color: "#876F45"
+            color: Theme.muted
             font.pixelSize: 14
             horizontalAlignment: Text.AlignHCenter
         }

@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-Dialog {
+StyledDialog {
     id: dlg
     modal: true
     standardButtons: Dialog.Ok | Dialog.Cancel
@@ -15,22 +15,21 @@ Dialog {
     signal acceptedWith(string name, string address)
 
     title: titleText
-    width: Math.min(420, parent ? parent.width * 0.92 : 420)
 
-    Column {
+    contentItem: Column {
         width: dlg.availableWidth
         spacing: 12
-        padding: 16
 
         Label {
             id: errorText
+            width: parent.width
             visible: false
             text: "Заполни оба поля"
-            color: "#B00020"
+            color: Theme.danger
             wrapMode: Text.Wrap
         }
 
-        TextField {
+        InputField {
             id: nameField
             width: parent.width
             placeholderText: "Название"
@@ -41,7 +40,7 @@ Dialog {
             }
         }
 
-        TextField {
+        InputField {
             id: addrField
             width: parent.width
             placeholderText: "Адрес / место"
@@ -53,9 +52,10 @@ Dialog {
         }
 
         Label {
+            width: parent.width
             text: "Подсказка: можно вводить адрес, название места или координаты (например: 60.1699, 24.9384)."
             wrapMode: Text.Wrap
-            opacity: 0.65
+            color: Theme.muted
             font.pixelSize: 12
         }
     }

@@ -16,12 +16,14 @@ Popup {
     x: (parent ? (parent.width - width) / 2 : 0)
     y: (parent ? parent.height - height - 24 : 0)
 
-    padding: 10
+    width: Math.min(implicitWidth, parent ? parent.width - 32 : implicitWidth)
+    padding: 14
 
     background: Rectangle {
-        radius: 10
-        color: "#323232"
-        opacity: 0.92
+        antialiasing: true
+        radius: 18
+        color: Theme.toast
+        opacity: 0.98
     }
 
     contentItem: Text {

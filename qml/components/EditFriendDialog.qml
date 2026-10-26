@@ -1,13 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-Dialog {
+StyledDialog {
     id: dlg
     modal: true
     title: titleText
     standardButtons: Dialog.Ok | Dialog.Cancel
     closePolicy: Popup.CloseOnEscape
-    width: Math.min(440, parent ? parent.width * 0.94 : 440)
 
     property string titleText: "Добавить друга"
     property string nameValue: ""
@@ -36,42 +35,42 @@ Dialog {
                 id: errorText
                 width: parent.width
                 visible: false
-                color: "#B00020"
+                color: Theme.danger
                 text: "Укажи имя"
             }
-            TextField {
+            InputField {
                 width: parent.width
                 placeholderText: "Имя *"
                 text: dlg.nameValue
                 onTextChanged: { dlg.nameValue = text; errorText.visible = false }
             }
-            TextField {
+            InputField {
                 width: parent.width
                 placeholderText: "Адрес для маршрута"
                 text: dlg.addressValue
                 onTextChanged: { dlg.addressValue = text; errorText.visible = false }
             }
-            TextField {
+            InputField {
                 width: parent.width
                 placeholderText: "Телефон"
                 text: dlg.phoneValue
                 inputMethodHints: Qt.ImhDialableCharactersOnly
                 onTextChanged: dlg.phoneValue = text
             }
-            TextField {
+            InputField {
                 width: parent.width
                 placeholderText: "Ключ от домофона / код"
                 text: dlg.intercomValue
                 onTextChanged: dlg.intercomValue = text
             }
-            TextField {
+            InputField {
                 width: parent.width
                 placeholderText: "Этаж"
                 text: dlg.floorValue
                 inputMethodHints: Qt.ImhDigitsOnly
                 onTextChanged: dlg.floorValue = text
             }
-            TextField {
+            InputField {
                 width: parent.width
                 placeholderText: "Номер квартиры"
                 text: dlg.apartmentValue
@@ -81,7 +80,7 @@ Dialog {
                 width: parent.width
                 text: "* Имя обязательно. Адрес нужен для маршрута, его можно добавить позже."
                 font.pixelSize: 12
-                opacity: 0.65
+                color: Theme.muted
                 wrapMode: Text.Wrap
             }
         }

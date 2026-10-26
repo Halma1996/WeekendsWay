@@ -24,6 +24,10 @@ ui_*.h
 Thumbs.db
 
 # Binaries
+*.p12
+*.jks
+*.keystore
+__pycache__/
 *.exe
 *.dll
 *.so

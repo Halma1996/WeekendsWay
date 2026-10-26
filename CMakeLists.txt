@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(WeekendsWay LANGUAGES CXX)
 
+set(WEEKENDSWAY_VERSION_CODE "1000001" CACHE STRING "Android update version code")
+set(WEEKENDSWAY_VERSION_NAME "1.1.0" CACHE STRING "Android display version")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -28,7 +31,12 @@ qt_add_executable(WeekendsWay
 )
 
 if(ANDROID)
+    if(NOT WEEKENDSWAY_VERSION_CODE MATCHES "^[1-9][0-9]*$")
+        message(FATAL_ERROR "WEEKENDSWAY_VERSION_CODE must be a positive integer")
+    endif()
     set_target_properties(WeekendsWay PROPERTIES
+        QT_ANDROID_VERSION_CODE "${WEEKENDSWAY_VERSION_CODE}"
+        QT_ANDROID_VERSION_NAME "${WEEKENDSWAY_VERSION_NAME}"
         QT_ANDROID_TARGET_SDK_VERSION 35
         QT_ANDROID_SDK_BUILD_TOOLS_REVISION 35.0.0
         QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"

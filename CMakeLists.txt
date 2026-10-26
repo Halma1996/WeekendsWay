@@ -14,6 +14,8 @@ set(APP_SOURCES
     src/main.cpp
     src/Navigator.h
     src/Navigator.cpp
+    src/MapLinks.h
+    src/MapLinks.cpp
     src/Storage.h
     src/Storage.cpp
     src/Contacts.h

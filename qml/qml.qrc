@@ -14,9 +14,9 @@
         <file>components/Toast.qml</file>
         <file>utils/StorageHelpers.js</file>
         <file>utils/ContactSync.js</file>
-        <file>../icons/home.svg</file>
-        <file>../icons/eat.svg</file>
-        <file>../icons/friends.svg</file>
+        <file alias="icons/home.png">../icons/home.png</file>
+        <file alias="icons/eat.png">../icons/eat.png</file>
+        <file alias="icons/friends.png">../icons/friends.png</file>
         <file>../icons/route.svg</file>
         <file>../icons/trash.svg</file>
         <file>components/ReturnButton.qml</file>

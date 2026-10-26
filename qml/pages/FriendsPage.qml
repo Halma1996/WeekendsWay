@@ -7,6 +7,7 @@ import App 1.0
 
 import "../components"
 import "../utils/StorageHelpers.js" as SH
+import "../utils/ContactSync.js" as CS
 
 Page {
     id: root
@@ -53,6 +54,7 @@ Page {
                 onClicked: {
                     editDlg.titleText = "Добавить друга"
                     editDlg.nameValue = ""
+                    editDlg.phoneValue = ""
                     editDlg.addressValue = ""
                     editDlg.intercomValue = ""
                     editDlg.floorValue = ""
@@ -68,9 +70,15 @@ Page {
         id: editDlg
         property int _editIndex: -1
 
-        onAcceptedWith: function(n, a, intercom, floor, apartment) {
-            var item = { name: n, address: a, intercom: intercom,
-                         floor: floor, apartment: apartment }
+        onAcceptedWith: function(n, a, intercom, floor, apartment, phone) {
+            var item = _editIndex < 0 ? CS.normalizeFriends([{name: n}])[0]
+                                      : CS.normalizeFriends([friendsModel.get(_editIndex)])[0]
+            item.name = n
+            item.address = a
+            item.phone = phone
+            item.intercom = intercom
+            item.floor = floor
+            item.apartment = apartment
             if (_editIndex < 0)
                 friendsModel.append(item)
             else
@@ -79,23 +87,23 @@ Page {
         }
     }
 
-    function normalizeFriends(arr) {
-        var result = []
-        if (!arr || arr.length === undefined) return result
-        for (var i = 0; i < arr.length; ++i) {
-            var item = arr[i]
-            if (!item) continue
-            var n = String(item.name === undefined ? "" : item.name).trim()
-            var a = String(item.address === undefined ? "" : item.address).trim()
-            if (!n && !a) continue
-            result.push({
-                name: n, address: a,
-                intercom: String(item.intercom == null ? "" : item.intercom),
-                floor: String(item.floor == null ? "" : item.floor),
-                apartment: String(item.apartment == null ? "" : item.apartment)
-            })
+    ContactsSyncDialog {
+        id: syncDialog
+        onSyncRequested: function(contacts, allContacts) {
+            var result = CS.merge(SH.modelToArray(friendsModel), contacts, allContacts)
+            if (!Storage.saveJson(root.fileName, result.friends)) {
+                resultError = "Не удалось сохранить друзей. Повторите попытку."
+                return
+            }
+            SH.arrayToModel(result.friends, friendsModel)
+            close()
+            toast.show("Добавлено: " + result.added + ". Обновлено: " + result.updated
+                       + ". Без изменений: " + result.unchanged + ".")
         }
-        return result
+    }
+
+    function normalizeFriends(arr) {
+        return CS.normalizeFriends(arr)
     }
 
     function save() {
@@ -119,8 +127,38 @@ Page {
         clip: true
         spacing: 8
 
-        // небольшой верхний отступ
-        header: Item { width: 1; height: 16 }
+        header: Column {
+            width: listView.width
+            topPadding: 8
+            bottomPadding: 12
+            spacing: 4
+
+            Button {
+                id: contactsSyncButton
+                objectName: "openContactsSyncButton"
+                x: 16
+                width: parent.width - 32
+                height: 56
+                text: "Синхронизировать контакты"
+                font.pixelSize: 15
+                highlighted: true
+                enabled: !Contacts.busy
+                background: Rectangle {
+                    radius: 12
+                    color: contactsSyncButton.down ? "#10513C" : "#176B50"
+                }
+                onClicked: syncDialog.open()
+            }
+            Label {
+                x: 16
+                width: parent.width - 32
+                text: "Все контакты или только выбранные"
+                font.pixelSize: 12
+                opacity: 0.65
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.Wrap
+            }
+        }
 
         delegate: Rectangle {
             id: friendCard
@@ -161,9 +199,17 @@ Page {
                         }
                         Label {
                             Layout.fillWidth: true
-                            text: address
+                            text: address || "Добавьте адрес для маршрута"
                             opacity: 0.7
                             font.pixelSize: 12
+                            elide: Text.ElideRight
+                        }
+                        Label {
+                            Layout.fillWidth: true
+                            visible: phone.length > 0
+                            text: phone
+                            font.pixelSize: 12
+                            opacity: 0.7
                             elide: Text.ElideRight
                         }
                     }
@@ -190,6 +236,8 @@ Page {
                         Accessible.name: "Построить маршрут к " + name
                         ToolTip.visible: hovered
                         ToolTip.text: "Построить маршрут"
+                        enabled: address.trim().length > 0
+                        opacity: enabled ? 1 : 0.35
                         onClicked: {
                             if (!Navigator.openRoute(address, "transit"))
                                 toast.show("Не удалось открыть карты")
@@ -263,6 +311,7 @@ Page {
                             onClicked: {
                                 editDlg.titleText = "Редактировать друга"
                                 editDlg.nameValue = name
+                                editDlg.phoneValue = phone
                                 editDlg.addressValue = address
                                 editDlg.intercomValue = intercom
                                 editDlg.floorValue = floor

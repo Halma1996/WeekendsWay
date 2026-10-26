@@ -37,11 +37,6 @@ Page {
                 wrapMode: Text.Wrap
             }
             InputField {
-                id: nameField
-                Layout.fillWidth: true
-                placeholderText: "Название (например, Дом)"
-            }
-            InputField {
                 id: addrField
                 Layout.fillWidth: true
                 placeholderText: "Адрес / место"
@@ -52,9 +47,9 @@ Page {
                 tone: "primary"
                 Layout.fillWidth: true
                 onClicked: {
-                    var data = { name: nameField.text.trim(), address: addrField.text.trim() }
-                    if (!data.name || !data.address) {
-                        toast.show("Заполни название и адрес")
+                    var data = { name: "Дом", address: addrField.text.trim() }
+                    if (!data.address) {
+                        toast.show("Укажи адрес")
                         return
                     }
                     if (Storage.saveJson(root.fileName, [data])) toast.show("Сохранено")
@@ -76,7 +71,6 @@ Page {
                 text: "Сбросить"
                 onClicked: {
                     Storage.removeFile(root.fileName)
-                    nameField.text = ""
                     addrField.text = ""
                     toast.show("Сброшено")
                 }
@@ -87,7 +81,6 @@ Page {
         var arr = Storage.loadJson(root.fileName, [])
         if (arr && arr.length > 0) {
             var obj = arr[0]
-            if (obj && obj.name) nameField.text = obj.name
             if (obj && obj.address) addrField.text = obj.address
         }
     }

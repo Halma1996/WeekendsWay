@@ -49,6 +49,7 @@ ApplicationWindow {
     }
 
     MapChoiceDialog {}
+    TaxiDialog {}
 
     Component { id: homePageComponent;    HomePage {} }
     Component { id: friendsPageComponent; FriendsPage {} }

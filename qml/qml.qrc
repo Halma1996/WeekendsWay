@@ -6,6 +6,7 @@
         <file>components/qmldir</file>
         <file>components/Theme.qml</file>
         <file>components/MapChoiceDialog.qml</file>
+        <file>components/TaxiDialog.qml</file>
         <file>components/ActionButton.qml</file>
         <file>components/IconAction.qml</file>
         <file>components/InputField.qml</file>
@@ -26,6 +27,7 @@
         <file alias="icons/eat.png">../icons/eat.png</file>
         <file alias="icons/friends.png">../icons/friends.png</file>
         <file alias="icons/edit.png">../icons/edit.png</file>
+        <file alias="icons/taxi.png">../icons/taxi.png</file>
         <file>../icons/route.svg</file>
         <file>../icons/trash.svg</file>
         <file>components/ReturnButton.qml</file>

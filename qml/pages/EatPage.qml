@@ -114,11 +114,13 @@ Page {
             color: Theme.surface
             border.color: Theme.border
 
-            RowLayout {
+            GridLayout {
                 id: venueRow
                 anchors.fill: parent
                 anchors.margins: 12
-                spacing: 4
+                columns: width < 320 ? 1 : 2
+                rowSpacing: 8
+                columnSpacing: 4
 
                 ColumnLayout {
                     Layout.fillWidth: true
@@ -142,62 +144,86 @@ Page {
                         elide: Text.ElideRight
                     }
                 }
-                IconAction {
-                    id: routeBtn
-                    objectName: "venueMapButton"
-                    Layout.preferredWidth: 44
-                    Layout.minimumWidth: 44
-                    Layout.maximumWidth: 44
-                    filled: true
-                    display: AbstractButton.IconOnly
-                    icon.source: "qrc:/icons/route.svg"
-                    icon.width: 26
-                    icon.height: 26
-                    padding: 9
-                    Accessible.name: address === name ? "Найти " + name + " на карте" : "Построить маршрут к " + name
-                    onClicked: {
-                        var opened = address === name ? Navigator.openSearch(name)
-                                                      : Navigator.openRoute(address, "walking")
-                        if (!opened) toast.show("Не удалось открыть карты")
+                RowLayout {
+                    Layout.alignment: Qt.AlignRight
+                    spacing: 4
+                    IconAction {
+                        objectName: "venueTaxiButton"
+                        Layout.preferredWidth: 44
+                        Layout.minimumWidth: 44
+                        Layout.maximumWidth: 44
+                        display: AbstractButton.IconOnly
+                        icon.source: "qrc:/icons/taxi.png"
+                        icon.color: "transparent"
+                        icon.width: 40
+                        icon.height: 40
+                        padding: 2
+                        Accessible.name: "Вызвать такси к " + name
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Вызвать такси"
+                        enabled: address.trim().length > 0
+                        onClicked: {
+                            if (!Taxi.request(address))
+                                toast.show("Проверьте адрес для такси")
+                        }
                     }
-                }
-                IconAction {
-                    id: editBtn
-                    objectName: "editVenueButton"
-                    Layout.preferredWidth: 44
-                    Layout.minimumWidth: 44
-                    Layout.maximumWidth: 44
-                    display: AbstractButton.IconOnly
-                    icon.source: "qrc:/icons/edit.png"
-                    icon.color: "transparent"
-                    icon.width: 36
-                    icon.height: 36
-                    padding: 4
-                    Accessible.name: "Изменить место " + name
-                    onClicked: {
-                        editDlg.titleText = "Редактировать место"
-                        editDlg.nameValue = name
-                        editDlg.addressValue = address
-                        editDlg._editIndex = index
-                        editDlg.open()
+                    IconAction {
+                        id: routeBtn
+                        objectName: "venueMapButton"
+                        Layout.preferredWidth: 44
+                        Layout.minimumWidth: 44
+                        Layout.maximumWidth: 44
+                        filled: true
+                        display: AbstractButton.IconOnly
+                        icon.source: "qrc:/icons/route.svg"
+                        icon.width: 26
+                        icon.height: 26
+                        padding: 9
+                        Accessible.name: address === name ? "Найти " + name + " на карте" : "Построить маршрут к " + name
+                        onClicked: {
+                            var opened = address === name ? Navigator.openSearch(name)
+                                                          : Navigator.openRoute(address, "walking")
+                            if (!opened) toast.show("Не удалось открыть карты")
+                        }
                     }
-                }
-                IconAction {
-                    id: delBtn
-                    objectName: "deleteVenueButton"
-                    Layout.preferredWidth: 44
-                    Layout.minimumWidth: 44
-                    Layout.maximumWidth: 44
-                    destructive: true
-                    display: AbstractButton.IconOnly
-                    icon.source: "qrc:/icons/trash.svg"
-                    icon.width: 24
-                    icon.height: 24
-                    Accessible.name: "Удалить место " + name
-                    onClicked: {
-                        venuesModel.remove(index)
-                        save()
-                        toast.show("Удалено")
+                    IconAction {
+                        id: editBtn
+                        objectName: "editVenueButton"
+                        Layout.preferredWidth: 44
+                        Layout.minimumWidth: 44
+                        Layout.maximumWidth: 44
+                        display: AbstractButton.IconOnly
+                        icon.source: "qrc:/icons/edit.png"
+                        icon.color: "transparent"
+                        icon.width: 36
+                        icon.height: 36
+                        padding: 4
+                        Accessible.name: "Изменить место " + name
+                        onClicked: {
+                            editDlg.titleText = "Редактировать место"
+                            editDlg.nameValue = name
+                            editDlg.addressValue = address
+                            editDlg._editIndex = index
+                            editDlg.open()
+                        }
+                    }
+                    IconAction {
+                        id: delBtn
+                        objectName: "deleteVenueButton"
+                        Layout.preferredWidth: 44
+                        Layout.minimumWidth: 44
+                        Layout.maximumWidth: 44
+                        destructive: true
+                        display: AbstractButton.IconOnly
+                        icon.source: "qrc:/icons/trash.svg"
+                        icon.width: 24
+                        icon.height: 24
+                        Accessible.name: "Удалить место " + name
+                        onClicked: {
+                            venuesModel.remove(index)
+                            save()
+                            toast.show("Удалено")
+                        }
                     }
                 }
             }

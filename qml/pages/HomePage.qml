@@ -57,6 +57,16 @@ Page {
                 }
             }
             ActionButton {
+                objectName: "homeTaxiButton"
+                text: "Вызвать такси"
+                Layout.fillWidth: true
+                enabled: addrField.displayText.trim().length > 0
+                onClicked: {
+                    if (!Taxi.request(addrField.displayText.trim()))
+                        toast.show("Проверьте адрес для такси")
+                }
+            }
+            ActionButton {
                 text: "Маршрут"
                 Layout.fillWidth: true
                 enabled: addrField.text.trim().length > 0

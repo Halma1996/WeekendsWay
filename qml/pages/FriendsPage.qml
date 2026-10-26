@@ -186,6 +186,28 @@ Page {
                     }
 
                     IconAction {
+                        objectName: "friendTaxiButton"
+                        Layout.preferredWidth: 56
+                        Layout.minimumWidth: 56
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        Layout.minimumHeight: 56
+                        display: AbstractButton.IconOnly
+                        icon.source: "qrc:/icons/taxi.png"
+                        icon.color: "transparent"
+                        icon.width: 48
+                        icon.height: 48
+                        padding: 4
+                        Accessible.name: "Вызвать такси к " + name
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Вызвать такси"
+                        enabled: address.trim().length > 0
+                        onClicked: {
+                            if (!Taxi.request(address))
+                                toast.show("Проверьте адрес для такси")
+                        }
+                    }
+                    IconAction {
                         id: routeFriendButton
                         objectName: "friendMapButton"
                         filled: true

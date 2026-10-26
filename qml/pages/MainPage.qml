@@ -1,79 +1,67 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import "../components"
 
 Page {
     id: root
     implicitWidth: 360
+    background: Item {}
     signal goHome()
     signal goFriends()
     signal goEat()
 
-    header: ToolBar {
-        Label {
-            anchors.centerIn: parent
-            text: "WeekendsWay"
-            font.pixelSize: 18
-            font.bold: true
-        }
-    }
+    header: PageHeader { title: "WeekendsWay"; backVisible: false }
 
     ScrollView {
         id: scrollView
         anchors.fill: parent
-        padding: 12
+        padding: 20
+        topPadding: 8
         contentWidth: availableWidth
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
         ColumnLayout {
-            id: contentColumn
             width: scrollView.availableWidth
-            spacing: 12
+            spacing: 14
 
-        BigActionButton {
-            Layout.fillWidth: true
-            text: "Домой"
-            subtitle: "Один адрес • открыть маршрут"
-            icon.source: "qrc:/icons/home.png"
-            onClicked: root.goHome()
-        }
-
-        BigActionButton {
-            Layout.fillWidth: true
-            text: "К друзьям"
-            subtitle: "Список • карточка • маршрут"
-            icon.source: "qrc:/icons/friends.png"
-            onClicked: root.goFriends()
-        }
-
-        BigActionButton {
-            Layout.fillWidth: true
-            text: "Кушать"
-            subtitle: "Список мест • открыть маршрут"
-            icon.source: "qrc:/icons/eat.png"
-            onClicked: root.goEat()
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            implicitHeight: 1
-            color: "#DDDDDD"
-            radius: 1
-            opacity: 0.8
-        }
-
-        Label {
-            Layout.fillWidth: true
-            text: "Выбери место — и построй маршрут в пару касаний."
-            wrapMode: Text.Wrap
-            opacity: 0.75
-        }
-
-        Item {
-            Layout.fillHeight: true
+            BigActionButton {
+                Layout.fillWidth: true
+                text: "Домой"
+                subtitle: "Один адрес • открыть маршрут"
+                icon.source: "qrc:/icons/home.png"
+                onClicked: root.goHome()
+            }
+            BigActionButton {
+                Layout.fillWidth: true
+                text: "К друзьям"
+                subtitle: "Список • карточка • маршрут"
+                icon.source: "qrc:/icons/friends.png"
+                purple: true
+                onClicked: root.goFriends()
+            }
+            BigActionButton {
+                Layout.fillWidth: true
+                text: "Кушать"
+                subtitle: "Список мест • открыть маршрут"
+                icon.source: "qrc:/icons/eat.png"
+                onClicked: root.goEat()
+            }
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: hint.implicitHeight + 32
+                radius: 22
+                color: Theme.card
+                Label {
+                    id: hint
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    text: "Выбери место — и построй маршрут в пару касаний."
+                    color: Theme.muted
+                    font.pixelSize: 13
+                    wrapMode: Text.Wrap
+                }
+            }
         }
     }
-}
 }

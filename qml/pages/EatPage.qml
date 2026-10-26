@@ -11,6 +11,7 @@ import "../utils/StorageHelpers.js" as SH
 Page {
     id: root
     title: "Кушать"
+    background: Item {}
 
     property string fileName: "venues.json"
     property string defaultsFileName: "venues-defaults.json"
@@ -27,47 +28,19 @@ Page {
 
     Toast { id: toast }
 
-    header: ToolBar {
-        Material.background: "#faa700"
-        Item {
-            anchors.fill: parent
-            anchors.margins: 8
-
-            ReturnButton {
-
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 5
-
-                onBackRequested: {
-                        if (root.StackView.view) root.StackView.view.pop()
-                        else if (root.stack) root.stack.pop()
-                    }
-            }
-
-            Label {
-                anchors.centerIn: parent
-                text: root.title
-                font.pixelSize: 18
-                font.bold: true
-                Layout.fillWidth: true
-                elide: Text.ElideRight
-            }
-
-            ToolButton {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: 5
-                text: "+"
-                font.pixelSize: 24
-                onClicked: {
-                    editDlg.titleText = "Добавить место"
-                    editDlg.nameValue = ""
-                    editDlg.addressValue = ""
-                    editDlg._editIndex = -1
-                    editDlg.open()
-                }
-            }
+    header: PageHeader {
+        title: root.title
+        addVisible: true
+        onBackRequested: {
+            if (root.StackView.view) root.StackView.view.pop()
+            else if (root.stack) root.stack.pop()
+        }
+        onAddRequested: {
+            editDlg.titleText = "Добавить место"
+            editDlg.nameValue = ""
+            editDlg.addressValue = ""
+            editDlg._editIndex = -1
+            editDlg.open()
         }
     }
 
@@ -125,6 +98,8 @@ Page {
     ListView {
         id: listView
         anchors.fill: parent
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
         model: venuesModel
         clip: true
         spacing: 8
@@ -133,49 +108,66 @@ Page {
         header: Item { width: 1; height: 16 }
 
         delegate: Rectangle {
-            x: 16
-            width: ListView.view.width - 32
-            height: 72
-            radius: 12
-            color: "#F7F7F7"
-            border.color: "#E0E0E0"
+            width: ListView.view.width
+            height: Math.max(88, venueRow.implicitHeight + 24)
+            radius: 20
+            color: Theme.surface
+            border.color: Theme.border
 
-            Row {
+            RowLayout {
+                id: venueRow
                 anchors.fill: parent
                 anchors.margins: 12
-                spacing: 12
+                spacing: 4
 
-                Column {
-                    width: parent.width - routeBtn.width - editBtn.width - delBtn.width - 36
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 2
-
-                    Label { width: parent.width; text: name; font.bold: true; elide: Text.ElideRight }
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 0
+                    spacing: 4
                     Label {
-                        width: parent.width
+                        Layout.fillWidth: true
+                        text: name
+                        color: Theme.text
+                        font.pixelSize: 14
+                        font.bold: true
+                        wrapMode: Text.Wrap
+                        maximumLineCount: 2
+                        elide: Text.ElideRight
+                    }
+                    Label {
+                        Layout.fillWidth: true
                         text: address === name ? "Найти на карте" : address
-                        opacity: 0.7
+                        color: Theme.muted
                         font.pixelSize: 12
                         elide: Text.ElideRight
                     }
                 }
-
-                ToolButton {
+                IconAction {
                     id: routeBtn
                     objectName: "venueMapButton"
-                    text: "🧭"
+                    Layout.preferredWidth: 44
+                    Layout.minimumWidth: 44
+                    Layout.maximumWidth: 44
+                    filled: true
+                    display: AbstractButton.IconOnly
+                    icon.source: "qrc:/icons/route.svg"
+                    icon.width: 26
+                    icon.height: 26
+                    padding: 9
                     Accessible.name: address === name ? "Найти " + name + " на карте" : "Построить маршрут к " + name
                     onClicked: {
                         var opened = address === name ? Navigator.openSearch(name)
                                                       : Navigator.openRoute(address, "walking")
-                        if (!opened)
-                            toast.show("Не удалось открыть карты")
+                        if (!opened) toast.show("Не удалось открыть карты")
                     }
                 }
-
-                ToolButton {
+                IconAction {
                     id: editBtn
-                    text: "✏️"
+                    Layout.preferredWidth: 44
+                    Layout.minimumWidth: 44
+                    Layout.maximumWidth: 44
+                    text: "✎"
+                    Accessible.name: "Изменить место " + name
                     onClicked: {
                         editDlg.titleText = "Редактировать место"
                         editDlg.nameValue = name
@@ -184,11 +176,18 @@ Page {
                         editDlg.open()
                     }
                 }
-
-                ToolButton {
+                IconAction {
                     id: delBtn
                     objectName: "deleteVenueButton"
-                    text: "🗑️"
+                    Layout.preferredWidth: 44
+                    Layout.minimumWidth: 44
+                    Layout.maximumWidth: 44
+                    destructive: true
+                    display: AbstractButton.IconOnly
+                    icon.source: "qrc:/icons/trash.svg"
+                    icon.width: 24
+                    icon.height: 24
+                    Accessible.name: "Удалить место " + name
                     onClicked: {
                         venuesModel.remove(index)
                         save()
@@ -205,16 +204,18 @@ Page {
             Column {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 16
+                anchors.margins: 0
                 spacing: 8
 
                 Label {
+                    width: parent.width
+                    color: Theme.muted
                     text: venuesModel.count === 0 ? "Пока нет мест. Нажми + чтобы добавить." : ""
                     opacity: 0.7
                     wrapMode: Text.Wrap
                 }
 
-                Button {
+                ActionButton {
                     text: "Показать путь AppData"
                     onClicked: toast.show(Storage.appDataPath())
                 }

@@ -12,6 +12,7 @@ import "../utils/ContactSync.js" as CS
 Page {
     id: root
     title: "К друзьям"
+    background: Item {}
 
     property string fileName: "friends.json"
     property var stack
@@ -19,50 +20,23 @@ Page {
 
     Toast { id: toast }
 
-    header: ToolBar {
-        Material.background: "#00fa19"
-
-        Item {
-            anchors.fill: parent
-            anchors.margins: 8
-
-            ReturnButton {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 5
-
-                onBackRequested: {
-                        if (root.StackView.view) root.StackView.view.pop()
-                        else if (root.stack) root.stack.pop()
-                    }
-            }
-
-            Label {
-                anchors.centerIn: parent
-                text: root.title
-                font.pixelSize: 18
-                font.bold: true
-                elide: Text.ElideRight
-            }
-
-            ToolButton {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: 5
-                text: "+"
-                font.pixelSize: 24
-                onClicked: {
-                    editDlg.titleText = "Добавить друга"
-                    editDlg.nameValue = ""
-                    editDlg.phoneValue = ""
-                    editDlg.addressValue = ""
-                    editDlg.intercomValue = ""
-                    editDlg.floorValue = ""
-                    editDlg.apartmentValue = ""
-                    editDlg._editIndex = -1
-                    editDlg.open()
-                }
-            }
+    header: PageHeader {
+        title: root.title
+        addVisible: true
+        onBackRequested: {
+            if (root.StackView.view) root.StackView.view.pop()
+            else if (root.stack) root.stack.pop()
+        }
+        onAddRequested: {
+            editDlg.titleText = "Добавить друга"
+            editDlg.nameValue = ""
+            editDlg.phoneValue = ""
+            editDlg.addressValue = ""
+            editDlg.intercomValue = ""
+            editDlg.floorValue = ""
+            editDlg.apartmentValue = ""
+            editDlg._editIndex = -1
+            editDlg.open()
         }
     }
 
@@ -123,9 +97,11 @@ Page {
     ListView {
         id: listView
         anchors.fill: parent
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
         model: friendsModel
         clip: true
-        spacing: 8
+        spacing: 10
 
         header: Column {
             width: listView.width
@@ -133,28 +109,22 @@ Page {
             bottomPadding: 12
             spacing: 4
 
-            Button {
+            ActionButton {
                 id: contactsSyncButton
                 objectName: "openContactsSyncButton"
-                x: 16
-                width: parent.width - 32
+                width: parent.width
                 height: 56
                 text: "Синхронизировать контакты"
                 font.pixelSize: 15
-                highlighted: true
+                tone: "purple"
                 enabled: !Contacts.busy
-                background: Rectangle {
-                    radius: 12
-                    color: contactsSyncButton.down ? "#10513C" : "#176B50"
-                }
                 onClicked: syncDialog.open()
             }
             Label {
-                x: 16
-                width: parent.width - 32
+                width: parent.width
                 text: "Все контакты или только выбранные"
                 font.pixelSize: 12
-                opacity: 0.65
+                color: Theme.muted
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.Wrap
             }
@@ -162,12 +132,11 @@ Page {
 
         delegate: Rectangle {
             id: friendCard
-            x: 16
-            width: ListView.view.width - 32
+            width: ListView.view.width
             height: cardContent.implicitHeight + 24
-            radius: 12
-            color: "#F7F7F7"
-            border.color: "#E0E0E0"
+            radius: 20
+            color: Theme.surface
+            border.color: Theme.border
 
             // Keep the expanded state local to each visible card.
             property bool expanded: false
@@ -195,12 +164,14 @@ Page {
                             Layout.fillWidth: true
                             text: name
                             font.bold: true
+                            font.pixelSize: 17
+                            color: Theme.text
                             elide: Text.ElideRight
                         }
                         Label {
                             Layout.fillWidth: true
                             text: address || "Добавьте адрес для маршрута"
-                            opacity: 0.7
+                            color: Theme.muted
                             font.pixelSize: 12
                             elide: Text.ElideRight
                         }
@@ -209,13 +180,15 @@ Page {
                             visible: phone.length > 0
                             text: phone
                             font.pixelSize: 12
-                            opacity: 0.7
+                            color: Theme.muted
                             elide: Text.ElideRight
                         }
                     }
 
-                    ToolButton {
+                    IconAction {
                         id: routeFriendButton
+                        objectName: "friendMapButton"
+                        filled: true
                         Layout.preferredWidth: 56
                         Layout.minimumWidth: 56
                         Layout.maximumWidth: 56
@@ -225,25 +198,19 @@ Page {
                         icon.source: "qrc:/icons/route.svg"
                         icon.width: 34
                         icon.height: 34
-                        icon.color: "#176B50"
                         padding: 11
                         topInset: 0
                         bottomInset: 0
-                        background: Rectangle {
-                            radius: 14
-                            color: routeFriendButton.down ? "#C5E7D7" : "#E0F2E8"
-                        }
                         Accessible.name: "Построить маршрут к " + name
                         ToolTip.visible: hovered
                         ToolTip.text: "Построить маршрут"
                         enabled: address.trim().length > 0
-                        opacity: enabled ? 1 : 0.35
                         onClicked: {
                             if (!Navigator.openRoute(address, "transit"))
                                 toast.show("Не удалось открыть карты")
                         }
                     }
-                    ToolButton {
+                    IconAction {
                         text: friendCard.expanded ? "⌃" : "⌄"
                         font.pixelSize: 22
                         Accessible.name: friendCard.expanded ? "Свернуть карточку" : "Раскрыть карточку"
@@ -265,8 +232,28 @@ Page {
                             font.pixelSize: 13
                             wrapMode: Text.WrapAnywhere
                         }
-                        ToolButton {
+                        IconAction {
                             text: "⧉"
+                            contentItem: Item {
+                                Rectangle {
+                                    width: 14; height: 17
+                                    x: (parent.width - width) / 2 - 3
+                                    y: (parent.height - height) / 2 - 3
+                                    radius: 3
+                                    color: "transparent"
+                                    border.width: 1.5
+                                    border.color: Theme.accent
+                                }
+                                Rectangle {
+                                    width: 14; height: 17
+                                    x: (parent.width - width) / 2 + 2
+                                    y: (parent.height - height) / 2 + 2
+                                    radius: 3
+                                    color: Theme.surface
+                                    border.width: 1.5
+                                    border.color: Theme.accent
+                                }
+                            }
                             Accessible.name: "Скопировать ключ домофона"
                             onClicked: {
                                 if (Storage.copyToClipboard(intercom))
@@ -292,7 +279,7 @@ Page {
                         Layout.fillWidth: true
                         visible: !friendCard.hasDetails
                         text: "Дополнительная информация не указана"
-                        opacity: 0.65
+                        color: Theme.muted
                         font.pixelSize: 12
                         wrapMode: Text.Wrap
                     }
@@ -300,7 +287,7 @@ Page {
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: 8
-                        Button {
+                        ActionButton {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 56
                             Layout.minimumHeight: 56
@@ -320,8 +307,9 @@ Page {
                                 editDlg.open()
                             }
                         }
-                        Button {
+                        ActionButton {
                             id: deleteFriendButton
+                            tone: "danger"
                             Layout.fillWidth: true
                             Layout.preferredHeight: 56
                             Layout.minimumHeight: 56
@@ -330,18 +318,12 @@ Page {
                             icon.source: "qrc:/icons/trash.svg"
                             icon.width: 32
                             icon.height: 32
-                            icon.color: "#B3261E"
                             font.pixelSize: 16
-                            Material.foreground: "#B3261E"
                             padding: 10
                             leftPadding: 12
                             rightPadding: 12
                             topInset: 0
                             bottomInset: 0
-                            background: Rectangle {
-                                radius: 14
-                                color: deleteFriendButton.down ? "#F4C5C0" : "#FCE9E7"
-                            }
                             Accessible.name: "Удалить друга " + name
                             onClicked: {
                                 friendsModel.remove(index)
@@ -361,16 +343,18 @@ Page {
             Column {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: 16
+                anchors.margins: 0
                 spacing: 8
 
                 Label {
+                    width: parent.width
+                    color: Theme.muted
                     text: friendsModel.count === 0 ? "Пока нет друзей. Нажми + чтобы добавить." : ""
                     opacity: 0.7
                     wrapMode: Text.Wrap
                 }
 
-                Button {
+                ActionButton {
                     text: "Показать путь AppData"
                     onClicked: toast.show(Storage.appDataPath())
                 }

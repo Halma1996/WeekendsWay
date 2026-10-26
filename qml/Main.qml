@@ -48,6 +48,8 @@ ApplicationWindow {
         z: 100
     }
 
+    MapChoiceDialog {}
+
     Component { id: homePageComponent;    HomePage {} }
     Component { id: friendsPageComponent; FriendsPage {} }
     Component { id: eatPageComponent;     EatPage {} }

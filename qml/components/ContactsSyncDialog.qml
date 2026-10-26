@@ -37,9 +37,16 @@ StyledDialog {
     property bool listReady: false
     property bool selectEverything: false
     property string resultError: ""
+    property string appliedQuery: ""
     signal syncRequested(var contacts, var allContacts)
 
-    ListModel { id: visibleContacts }
+    ListModel { id: visibleContacts; objectName: "filteredContactsModel" }
+
+    Timer {
+        id: filterDelay
+        interval: 120
+        onTriggered: dlg.filterContacts()
+    }
 
     function identity(contact) {
         return contact.contactKey ? "key:" + contact.contactKey : "id:" + contact.contactId
@@ -65,17 +72,40 @@ StyledDialog {
         resultError = ""
     }
 
-    function filterContacts() {
-        visibleContacts.clear()
-        var query = searchField.text.trim().toLocaleLowerCase()
+    function filterContacts(force) {
+        // displayText includes the keyboard's uncommitted (underlined) word.
+        // Waiting for text alone delays Android search until Space/Enter.
+        var query = searchField.displayText.trim().toLocaleLowerCase()
+        if (!force && query === appliedQuery) return
         var digits = query.replace(/\D/g, "")
+        var matches = []
+        var keep = {}
         for (var i = 0; i < allContacts.length; ++i) {
             var contact = allContacts[i]
             var searchable = (contact.name + " " + contact.phone + " " + contact.address).toLocaleLowerCase()
             if (!query || searchable.indexOf(query) >= 0
-                    || (digits && contact.phone.replace(/\D/g, "").indexOf(digits) >= 0))
-                visibleContacts.append(contact)
+                    || (digits && contact.phone.replace(/\D/g, "").indexOf(digits) >= 0)) {
+                matches.push(contact)
+                keep[identity(contact)] = true
+            }
         }
+        // Both lists retain phonebook order. Keep matching rows and their
+        // delegates instead of clearing the model (which flashes an empty list).
+        var end = visibleContacts.count - 1
+        while (end >= 0) {
+            if (keep[identity(visibleContacts.get(end))]) { --end; continue }
+            var start = end
+            while (start > 0 && !keep[identity(visibleContacts.get(start - 1))]) --start
+            visibleContacts.remove(start, end - start + 1)
+            end = start - 1
+        }
+        for (var row = 0; row < matches.length; ++row) {
+            if (row >= visibleContacts.count)
+                visibleContacts.append(matches[row])
+            else if (identity(visibleContacts.get(row)) !== identity(matches[row]))
+                visibleContacts.insert(row, matches[row])
+        }
+        appliedQuery = query
     }
 
     function begin(all) {
@@ -93,14 +123,17 @@ StyledDialog {
     }
 
     onAboutToShow: {
+        filterDelay.stop()
         allContacts = []
         selectedIds = ({})
         selectedCount = 0
         listReady = false
         resultError = ""
-        searchField.text = ""
+        appliedQuery = ""
+        searchField.clear()
         visibleContacts.clear()
     }
+    onClosed: filterDelay.stop()
 
     Connections {
         target: Contacts
@@ -109,7 +142,7 @@ StyledDialog {
             dlg.allContacts = contacts
             dlg.listReady = true
             dlg.selectAll(dlg.selectEverything)
-            dlg.filterContacts()
+            dlg.filterContacts(true)
         }
     }
 
@@ -183,7 +216,7 @@ StyledDialog {
             topPadding: dlg.compact ? 8 : 14
             bottomPadding: dlg.compact ? 8 : 14
             placeholderText: "Имя или телефон"
-            onTextChanged: if (dlg.listReady) dlg.filterContacts()
+            onDisplayTextChanged: if (dlg.visible && dlg.listReady) filterDelay.restart()
         }
         RowLayout {
             Layout.fillWidth: true

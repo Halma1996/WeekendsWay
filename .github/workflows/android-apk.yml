@@ -14,7 +14,11 @@ concurrency:
 
 jobs:
   android:
-    if: github.ref == 'refs/heads/Ai_brench'
+    # Ordinary changes must not build an APK. Add the marker only for a requested build.
+    if: >-
+      github.ref == 'refs/heads/Ai_brench' &&
+      (github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '[build apk]'))
     runs-on: ubuntu-22.04
     timeout-minutes: 45
     env:

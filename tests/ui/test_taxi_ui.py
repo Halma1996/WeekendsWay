@@ -265,7 +265,7 @@ QtObject {
         self.click(self.by_name("cancelTaxiButton"))
         self.click(self.by_name("friendMapButton"))
         self.assertEqual(self.navigator.calls[-1], ("route", ADDRESS, "transit"))
-        self.click("⌄")
+        self.click(self.by_name("friendDetailsButton"))
         edit = self.by_name("editFriendButton")
         self.assertEqual(QQmlProperty(edit, "icon.source").read(), QUrl("qrc:/icons/edit.png"))
         # The resource exists and the actual edit action opens the existing form.

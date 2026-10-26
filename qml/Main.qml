@@ -14,8 +14,20 @@ ApplicationWindow {
     visible: true
     title: "WeekendsWay"
 
-    Material.theme: Material.Light
-    Material.primary: "#00fa9e"
+    color: Theme.background
+    font.pixelSize: 15
+    Material.theme: Theme.dark ? Material.Dark : Material.Light
+    Material.primary: Theme.background
+    Material.accent: Theme.accent
+    Material.foreground: Theme.text
+    Material.background: Theme.surface
+    background: Rectangle {
+        antialiasing: true
+        gradient: Gradient {
+            GradientStop { position: 0; color: Theme.backgroundTop }
+            GradientStop { position: 1; color: Theme.background }
+        }
+    }
     StackView {
         id: stack
         anchors.fill: parent

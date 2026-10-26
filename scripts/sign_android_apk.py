@@ -14,8 +14,18 @@ import tempfile
 def run(command, env=None):
     result = subprocess.run(command, env=env, capture_output=True)
     if result.returncode:
-        # Command arguments contain only password-file paths, never passwords.
-        raise RuntimeError(f"{Path(command[0]).name} failed (exit {result.returncode})")
+        message = (result.stderr + result.stdout).decode(errors="replace").strip()
+        active_env = env if env is not None else os.environ
+        sensitive = [active_env.get("WW_KEY_PASSWORD", ""), active_env.get("WEEKENDSWAY_SIGNING_JSON", "")]
+        try:
+            secret = json.loads(active_env.get("WEEKENDSWAY_SIGNING_JSON", "{}"))
+            sensitive += [secret.get("password", ""), secret.get("keystore", "")]
+        except (TypeError, ValueError, AttributeError):
+            pass
+        for value in sensitive:
+            if value:
+                message = message.replace(value, "<redacted>")
+        raise RuntimeError(f"{Path(command[0]).name} {command[1]} failed (exit {result.returncode}): {message}")
     return result.stdout
 
 
@@ -51,9 +61,6 @@ def main():
         key = private / "signing.p12"
         key.write_bytes(keystore)
         key.chmod(0o600)
-        password_file = private / "password"
-        password_file.write_text(password + "\n")
-        password_file.chmod(0o600)
         env = os.environ.copy()
         env["WW_KEY_PASSWORD"] = password
         certificate = run(["keytool", "-exportcert", "-keystore", str(key), "-alias", "weekendsway",
@@ -61,9 +68,12 @@ def main():
         if hashlib.sha256(certificate).hexdigest() != expected:
             raise ValueError("Signing certificate differs from android/signing-certificate.sha256; refusing key rotation")
         args.output.parent.mkdir(parents=True, exist_ok=True)
+        # Reusing a one-line password file for both options consumes two
+        # lines in apksigner. Environment lookup safely reuses the same value.
         run([args.apksigner, "sign", "--ks", str(key), "--ks-key-alias", "weekendsway",
-             "--ks-pass", "file:" + str(password_file), "--key-pass", "file:" + str(password_file),
-             "--out", str(args.output), str(args.input)])
+             "--ks-pass", "env:WW_KEY_PASSWORD", "--key-pass", "env:WW_KEY_PASSWORD",
+             "--v2-signing-enabled", "true",
+             "--out", str(args.output), str(args.input)], env=env)
         verification = run([args.apksigner, "verify", "--verbose", "--print-certs", str(args.output)]).decode()
         fingerprints = re.findall(r"Signer #\d+ certificate SHA-256 digest: ([0-9a-fA-F]+)", verification)
         if [fingerprint.lower() for fingerprint in fingerprints] != [expected]:

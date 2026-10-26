@@ -1,7 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>Main.qml</file>
-        <file>cats-loading.jpg</file>
+        <file>beer-mug.png</file>
+        <file>components/BeerSplash.qml</file>
         <file>pages/MainPage.qml</file>
         <file>pages/HomePage.qml</file>
         <file>pages/FriendsPage.qml</file>
@@ -14,6 +15,8 @@
         <file>../icons/home.svg</file>
         <file>../icons/eat.svg</file>
         <file>../icons/friends.svg</file>
+        <file>../icons/route.svg</file>
+        <file>../icons/trash.svg</file>
         <file>components/ReturnButton.qml</file>
     </qresource>
 </RCC>

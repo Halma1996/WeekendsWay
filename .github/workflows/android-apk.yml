@@ -58,7 +58,7 @@ jobs:
           modules: qtshadertools
           cache: true
 
-      - name: Test map selection and provider links
+      - name: Test maps and taxi destinations
         shell: bash
         run: |
           cmake -S tests/navigation -B build-navigation-tests \
@@ -71,7 +71,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Test contact search with composing keyboard input
+      - name: Test contact input and taxi UI
         shell: bash
         env:
           QT_QPA_PLATFORM: offscreen
@@ -81,6 +81,8 @@ jobs:
           "$RUNNER_TEMP/ui-tests/bin/pip" install 'PySide6-Essentials==6.8.3'
           env -u QT_PLUGIN_PATH -u QML2_IMPORT_PATH -u QML_IMPORT_PATH \
             "$RUNNER_TEMP/ui-tests/bin/python" tests/ui/test_contacts_search.py
+          env -u QT_PLUGIN_PATH -u QML2_IMPORT_PATH -u QML_IMPORT_PATH \
+            "$RUNNER_TEMP/ui-tests/bin/python" tests/ui/test_taxi_ui.py
 
       - name: Configure
         shell: bash

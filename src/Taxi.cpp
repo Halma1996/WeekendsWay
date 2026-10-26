@@ -1,5 +1,6 @@
 #include "Taxi.h"
 #include "TaxiLinks.h"
+#include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>

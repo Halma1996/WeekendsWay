@@ -57,11 +57,13 @@ QUrl MapLinks::route(const QString& id, const QString& destination, const QStrin
     if (id == "google")
         return QUrl::fromEncoded("https://www.google.com/maps/dir/?api=1&destination=" + text + "&travelmode=" + mode.toLatin1());
     if (id == "yandex") {
-        // A literal tilde is a route-point separator even after URL decoding.
-        // Search for such text instead of accidentally adding a waypoint.
-        if (destination.contains('~')) return search(id, destination);
+        // Android's rtext describes coordinate pairs (latitude, longitude),
+        // not an arbitrary address. Let Yandex resolve text in its search UI;
+        // rtt would not apply to that search and must not be sent with it.
+        QString lat, lon;
+        if (!coordinates(destination, lat, lon)) return search(id, destination);
         const QByteArray type = mode == "walking" ? "pd" : mode == "driving" ? "auto" : mode == "bicycling" ? "bc" : "mt";
-        return QUrl::fromEncoded("yandexmaps://maps.yandex.ru/?rtext=~" + text + "&rtt=" + type);
+        return QUrl::fromEncoded("yandexmaps://maps.yandex.ru/?rtext=~" + lat.toLatin1() + "," + lon.toLatin1() + "&rtt=" + type);
     }
     if (id == "2gis") {
         QString lat, lon;
@@ -74,5 +76,5 @@ QUrl MapLinks::route(const QString& id, const QString& destination, const QStrin
 bool MapLinks::needsAddressConfirmation(const QString& id, const QString& destination)
 {
     QString latitude, longitude;
-    return id == "2gis" && !coordinates(destination, latitude, longitude);
+    return (id == "yandex" || id == "2gis") && !coordinates(destination, latitude, longitude);
 }

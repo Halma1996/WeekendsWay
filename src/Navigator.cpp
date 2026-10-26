@@ -98,8 +98,11 @@ void Navigator::refreshMapApps()
         for (const auto& id : MapLinks::appIds()) {
             if (!m_platform->available(id, requestUrl(id))) continue;
             const bool confirm = m_pending && !m_defaults && !m_search && MapLinks::needsAddressConfirmation(id, m_destination);
+            const auto note = !confirm ? QString() : id == "yandex"
+                ? QStringLiteral("Откроется поиск адреса. Выберите найденную точку, нажмите «Сюда» и выберите способ передвижения в Яндекс Картах.")
+                : QStringLiteral("Выберите адрес в 2ГИС и нажмите «Сюда»");
             apps.append(QVariantMap{{"id", id}, {"name", MapLinks::appName(id)},
-                {"note", confirm ? QStringLiteral("Выберите адрес в 2ГИС и нажмите «Сюда»") : QString()}});
+                {"note", note}});
         }
     }
     if (m_apps != apps) { m_apps = apps; emit mapAppsChanged(); }

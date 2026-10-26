@@ -163,10 +163,16 @@ Page {
                 }
                 IconAction {
                     id: editBtn
+                    objectName: "editVenueButton"
                     Layout.preferredWidth: 44
                     Layout.minimumWidth: 44
                     Layout.maximumWidth: 44
-                    text: "✎"
+                    display: AbstractButton.IconOnly
+                    icon.source: "qrc:/icons/edit.png"
+                    icon.color: "transparent"
+                    icon.width: 36
+                    icon.height: 36
+                    padding: 4
                     Accessible.name: "Изменить место " + name
                     onClicked: {
                         editDlg.titleText = "Редактировать место"
@@ -215,10 +221,6 @@ Page {
                     wrapMode: Text.Wrap
                 }
 
-                ActionButton {
-                    text: "Показать путь AppData"
-                    onClicked: toast.show(Storage.appDataPath())
-                }
             }
         }
     }

@@ -288,13 +288,20 @@ Page {
                         Layout.fillWidth: true
                         spacing: 8
                         ActionButton {
+                            objectName: "editFriendButton"
                             Layout.fillWidth: true
                             Layout.preferredHeight: 56
                             Layout.minimumHeight: 56
                             text: "Изменить"
-                            font.pixelSize: 15
-                            leftPadding: 12
-                            rightPadding: 12
+                            display: AbstractButton.TextBesideIcon
+                            icon.source: "qrc:/icons/edit.png"
+                            icon.color: "transparent"
+                            icon.width: 32
+                            icon.height: 32
+                            Accessible.name: "Изменить друга " + name
+                            font.pixelSize: 13
+                            leftPadding: 8
+                            rightPadding: 8
                             onClicked: {
                                 editDlg.titleText = "Редактировать друга"
                                 editDlg.nameValue = name
@@ -318,10 +325,10 @@ Page {
                             icon.source: "qrc:/icons/trash.svg"
                             icon.width: 32
                             icon.height: 32
-                            font.pixelSize: 16
+                            font.pixelSize: 13
                             padding: 10
-                            leftPadding: 12
-                            rightPadding: 12
+                            leftPadding: 8
+                            rightPadding: 8
                             topInset: 0
                             bottomInset: 0
                             Accessible.name: "Удалить друга " + name
@@ -354,10 +361,6 @@ Page {
                     wrapMode: Text.Wrap
                 }
 
-                ActionButton {
-                    text: "Показать путь AppData"
-                    onClicked: toast.show(Storage.appDataPath())
-                }
             }
         }
     }

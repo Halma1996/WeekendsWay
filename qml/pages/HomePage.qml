@@ -32,7 +32,7 @@ Page {
             spacing: 16
             Label {
                 Layout.fillWidth: true
-                text: "Сохраните один домашний адрес (Lean-MVP)."
+                text: "Сохраните домашний адрес."
                 color: Theme.muted
                 wrapMode: Text.Wrap
             }

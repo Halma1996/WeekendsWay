@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.15
 
 import App 1.0
@@ -149,6 +150,7 @@ Page {
 
                     ColumnLayout {
                         Layout.fillWidth: true
+                        Layout.minimumWidth: 0
                         spacing: 2
 
                         Label {
@@ -167,8 +169,27 @@ Page {
                     }
 
                     ToolButton {
-                        text: "🧭"
+                        id: routeFriendButton
+                        Layout.preferredWidth: 56
+                        Layout.minimumWidth: 56
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        Layout.minimumHeight: 56
+                        display: AbstractButton.IconOnly
+                        icon.source: "qrc:/icons/route.svg"
+                        icon.width: 34
+                        icon.height: 34
+                        icon.color: "#176B50"
+                        padding: 11
+                        topInset: 0
+                        bottomInset: 0
+                        background: Rectangle {
+                            radius: 14
+                            color: routeFriendButton.down ? "#C5E7D7" : "#E0F2E8"
+                        }
                         Accessible.name: "Построить маршрут к " + name
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Построить маршрут"
                         onClicked: {
                             if (!Navigator.openRoute(address, "transit"))
                                 toast.show("Не удалось открыть карты")
@@ -176,6 +197,7 @@ Page {
                     }
                     ToolButton {
                         text: friendCard.expanded ? "⌃" : "⌄"
+                        font.pixelSize: 22
                         Accessible.name: friendCard.expanded ? "Свернуть карточку" : "Раскрыть карточку"
                         onClicked: friendCard.expanded = !friendCard.expanded
                     }
@@ -229,9 +251,15 @@ Page {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Item { Layout.fillWidth: true }
+                        spacing: 8
                         Button {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 56
+                            Layout.minimumHeight: 56
                             text: "Изменить"
+                            font.pixelSize: 15
+                            leftPadding: 12
+                            rightPadding: 12
                             onClicked: {
                                 editDlg.titleText = "Редактировать друга"
                                 editDlg.nameValue = name
@@ -244,7 +272,28 @@ Page {
                             }
                         }
                         Button {
+                            id: deleteFriendButton
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 56
+                            Layout.minimumHeight: 56
                             text: "Удалить"
+                            display: AbstractButton.TextBesideIcon
+                            icon.source: "qrc:/icons/trash.svg"
+                            icon.width: 32
+                            icon.height: 32
+                            icon.color: "#B3261E"
+                            font.pixelSize: 16
+                            Material.foreground: "#B3261E"
+                            padding: 10
+                            leftPadding: 12
+                            rightPadding: 12
+                            topInset: 0
+                            bottomInset: 0
+                            background: Rectangle {
+                                radius: 14
+                                color: deleteFriendButton.down ? "#F4C5C0" : "#FCE9E7"
+                            }
+                            Accessible.name: "Удалить друга " + name
                             onClicked: {
                                 friendsModel.remove(index)
                                 save()

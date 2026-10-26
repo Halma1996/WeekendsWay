@@ -19,7 +19,6 @@ set(APP_SOURCES
     src/Contacts.h
     src/Contacts.cpp
     qml/qml.qrc
-    icons/home.svg
 )
 
 qt_add_executable(WeekendsWay

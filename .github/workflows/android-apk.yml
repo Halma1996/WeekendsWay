@@ -58,6 +58,14 @@ jobs:
           modules: qtshadertools
           cache: true
 
+      - name: Test map selection and provider links
+        shell: bash
+        run: |
+          cmake -S tests/navigation -B build-navigation-tests \
+            -DCMAKE_PREFIX_PATH="$QT_HOST_PATH"
+          cmake --build build-navigation-tests --parallel 2
+          ctest --test-dir build-navigation-tests --output-on-failure
+
       - name: Restore test signing key
         uses: actions/cache@v4
         with:

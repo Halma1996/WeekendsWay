@@ -23,6 +23,10 @@ set(APP_SOURCES
     src/Storage.cpp
     src/Contacts.h
     src/Contacts.cpp
+    src/Taxi.h
+    src/Taxi.cpp
+    src/TaxiLinks.h
+    src/TaxiLinks.cpp
     qml/qml.qrc
 )
 

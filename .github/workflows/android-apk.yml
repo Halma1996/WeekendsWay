@@ -23,6 +23,8 @@ jobs:
     timeout-minutes: 45
     env:
       ANDROID_NDK_VERSION: '26.1.10909125'
+    outputs:
+      apk_sha256: ${{ steps.signed_apk.outputs.sha256 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -109,6 +111,7 @@ jobs:
         run: cmake --build build --target apk --parallel 2
 
       - name: Sign and verify update-compatible APK
+        id: signed_apk
         shell: bash
         env:
           WEEKENDSWAY_SIGNING_JSON: ${{ secrets.WEEKENDSWAY_SIGNING_JSON }}
@@ -123,6 +126,8 @@ jobs:
             --apksigner "$ANDROID_HOME/build-tools/35.0.0/apksigner" \
             --aapt "$ANDROID_HOME/build-tools/35.0.0/aapt" \
             --version-code "$WEEKENDSWAY_VERSION_CODE"
+          apk_sha256=$(sha256sum dist/WeekendsWay-arm64-v8a.apk | cut -d ' ' -f 1)
+          echo "sha256=$apk_sha256" >> "$GITHUB_OUTPUT"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

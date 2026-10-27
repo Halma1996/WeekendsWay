@@ -9,6 +9,7 @@
         <file>components/TaxiDialog.qml</file>
         <file>components/ActionButton.qml</file>
         <file>components/IconAction.qml</file>
+        <file>components/ImageAction.qml</file>
         <file>components/InputField.qml</file>
         <file>components/PageHeader.qml</file>
         <file>components/StyledDialog.qml</file>

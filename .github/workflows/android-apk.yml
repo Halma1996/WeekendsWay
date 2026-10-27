@@ -137,3 +137,91 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           overwrite: true
+
+  publish-apk:
+    name: Save APK in Ai_brench
+    needs: android
+    if: github.repository == 'Halma1996/WeekendsWay' && github.ref == 'refs/heads/Ai_brench'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout built source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Download signed APK
+        uses: actions/download-artifact@v4
+        with:
+          name: WeekendsWay-android-arm64-apk
+          path: dist
+
+      - name: Verify and prepare repository APK
+        shell: bash
+        env:
+          EXPECTED_APK_SHA256: ${{ needs.android.outputs.apk_sha256 }}
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import os
+          from pathlib import Path
+          import re
+
+          repo = os.environ['GITHUB_REPOSITORY']
+          ref = os.environ['GITHUB_REF']
+          source_sha = os.environ['GITHUB_SHA']
+          expected = os.environ['EXPECTED_APK_SHA256']
+          if repo != 'Halma1996/WeekendsWay' or ref != 'refs/heads/Ai_brench':
+              raise SystemExit('APK publication is restricted to Halma1996/WeekendsWay Ai_brench')
+          if not re.fullmatch(r'[0-9a-f]{40}', source_sha):
+              raise SystemExit('Invalid source commit')
+          if not re.fullmatch(r'[0-9a-f]{64}', expected):
+              raise SystemExit('Missing or invalid signed APK digest')
+          apk = Path('dist/WeekendsWay-arm64-v8a.apk').read_bytes()
+          actual = hashlib.sha256(apk).hexdigest()
+          if actual != expected:
+              raise SystemExit('Downloaded APK does not match the signed build')
+
+          version = f"1.1.{int(os.environ['GITHUB_RUN_NUMBER'])}.{int(os.environ['GITHUB_RUN_ATTEMPT'])}"
+          run_url = f"https://github.com/{repo}/actions/runs/{int(os.environ['GITHUB_RUN_ID'])}"
+          target = Path('apk')
+          target.mkdir(exist_ok=True)
+          (target / 'WeekendsWay-latest.apk').write_bytes(apk)
+          (target / 'WeekendsWay-latest.apk.sha256').write_text(
+              f'{actual}  WeekendsWay-latest.apk\n', encoding='utf-8')
+          (target / 'README.md').write_text(
+              '# WeekendsWay APK\n\n'
+              '[Скачать APK](WeekendsWay-latest.apk)\n\n'
+              f'Версия: **{version}**. Android 9+, **arm64-v8a**.\n\n'
+              'APK подписан постоянным ключом проекта. Идентификатор пакета: '
+              '`org.qtproject.example.WeekendsWay`.\n\n'
+              f'Исходный код: [{source_sha}](https://github.com/{repo}/commit/{source_sha}).\n\n'
+              f'[Сборка GitHub Actions]({run_url}).\n\n'
+              f'SHA-256: `{actual}`.\n\n'
+              'Установка и работа на физическом Android-устройстве этой сборкой не проверяются.\n',
+              encoding='utf-8')
+          print(f'Prepared APK {version}: {len(apk)} bytes, SHA-256 {actual}')
+          PY
+
+      - name: Commit APK only to Ai_brench
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == 'Halma1996/WeekendsWay' ]]
+          [[ "$GITHUB_REF" == 'refs/heads/Ai_brench' ]]
+          git fetch origin Ai_brench --depth=1
+          if [[ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]]; then
+            echo 'Ai_brench advanced after this build; refusing to publish an outdated APK'
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- apk/WeekendsWay-latest.apk apk/WeekendsWay-latest.apk.sha256 apk/README.md
+          if git diff --cached --quiet; then
+            echo 'Repository APK is already current'
+            exit 0
+          fi
+          git commit -m "Update APK 1.1.${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT} [skip ci]"
+          git push origin HEAD:refs/heads/Ai_brench

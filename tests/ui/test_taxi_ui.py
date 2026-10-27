@@ -274,17 +274,14 @@ QtObject {
         self.assertTrue(self.by_text("OK"))
         self.click("Cancel")
 
-    def test_venue_uses_card_address_and_chain_remains_a_search(self):
+    def test_venue_has_no_taxi_and_map_actions_use_card_address(self):
         self.click("Кушать")
         buttons = [item for item in self.items() if item.isVisible() and item.objectName() == "venueTaxiButton"]
-        self.assertEqual(len(buttons), 2)
-        self.click(buttons[0])
-        self.assertEqual(self.taxi.calls[-1], ("search", ADDRESS))
-        self.click(self.by_name("cancelTaxiButton"))
-        self.click(buttons[1])
-        self.assertEqual(self.taxi.calls[-1], ("search", "Додо Пицца"))
-        self.click(self.by_name("cancelTaxiButton"))
+        self.assertEqual(buttons, [])
+        self.assertEqual(self.taxi.calls, [])
         maps = [item for item in self.items() if item.isVisible() and item.objectName() == "venueMapButton"]
+        self.click(maps[0])
+        self.assertEqual(self.navigator.calls[-1], ("route", ADDRESS, "walking"))
         self.click(maps[1])
         self.assertEqual(self.navigator.calls[-1], ("search", "Додо Пицца"))
 
@@ -321,6 +318,12 @@ QtObject {
                 QMetaObject.invokeMethod(self.harness, "setDark", Q_ARG("QVariant", dark))
                 for page in ("К друзьям", "Кушать"):
                     self.click(page)
+                    names = ("friendTaxiButton", "friendMapButton", "friendDetailsButton") if page == "К друзьям" else (
+                        "venueMapButton", "editVenueButton", "deleteVenueButton")
+                    for name in names:
+                        for button in [item for item in self.items() if item.isVisible() and item.objectName() == name]:
+                            self.assertAlmostEqual(button.width(), 56, places=1)
+                            self.assertAlmostEqual(button.height(), 56, places=1)
                     for item in self.items():
                         if not item.isVisible() or item.metaObject().indexOfSignal("clicked()") < 0:
                             continue

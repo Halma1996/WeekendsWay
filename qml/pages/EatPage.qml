@@ -148,37 +148,20 @@ Page {
                     Layout.alignment: Qt.AlignRight
                     spacing: 4
                     IconAction {
-                        objectName: "venueTaxiButton"
-                        Layout.preferredWidth: 44
-                        Layout.minimumWidth: 44
-                        Layout.maximumWidth: 44
-                        display: AbstractButton.IconOnly
-                        icon.source: "qrc:/icons/taxi.png"
-                        icon.color: "transparent"
-                        icon.width: 40
-                        icon.height: 40
-                        padding: 2
-                        Accessible.name: "Вызвать такси к " + name
-                        ToolTip.visible: hovered
-                        ToolTip.text: "Вызвать такси"
-                        enabled: address.trim().length > 0
-                        onClicked: {
-                            if (!Taxi.request(address))
-                                toast.show("Проверьте адрес для такси")
-                        }
-                    }
-                    IconAction {
                         id: routeBtn
                         objectName: "venueMapButton"
-                        Layout.preferredWidth: 44
-                        Layout.minimumWidth: 44
-                        Layout.maximumWidth: 44
+                        Layout.preferredWidth: 56
+                        Layout.minimumWidth: 56
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        Layout.minimumHeight: 56
+                        Layout.maximumHeight: 56
                         filled: true
                         display: AbstractButton.IconOnly
                         icon.source: "qrc:/icons/route.svg"
-                        icon.width: 26
-                        icon.height: 26
-                        padding: 9
+                        icon.width: 34
+                        icon.height: 34
+                        padding: 11
                         Accessible.name: address === name ? "Найти " + name + " на карте" : "Построить маршрут к " + name
                         onClicked: {
                             var opened = address === name ? Navigator.openSearch(name)
@@ -186,18 +169,11 @@ Page {
                             if (!opened) toast.show("Не удалось открыть карты")
                         }
                     }
-                    IconAction {
+                    ImageAction {
                         id: editBtn
                         objectName: "editVenueButton"
-                        Layout.preferredWidth: 44
-                        Layout.minimumWidth: 44
-                        Layout.maximumWidth: 44
-                        display: AbstractButton.IconOnly
                         icon.source: "qrc:/icons/edit.png"
-                        icon.color: "transparent"
-                        icon.width: 36
-                        icon.height: 36
-                        padding: 4
+                        imageClipRect: Qt.rect(96, 99, 1344, 1338)
                         Accessible.name: "Изменить место " + name
                         onClicked: {
                             editDlg.titleText = "Редактировать место"
@@ -210,14 +186,18 @@ Page {
                     IconAction {
                         id: delBtn
                         objectName: "deleteVenueButton"
-                        Layout.preferredWidth: 44
-                        Layout.minimumWidth: 44
-                        Layout.maximumWidth: 44
+                        Layout.preferredWidth: 56
+                        Layout.minimumWidth: 56
+                        Layout.maximumWidth: 56
+                        Layout.preferredHeight: 56
+                        Layout.minimumHeight: 56
+                        Layout.maximumHeight: 56
                         destructive: true
                         display: AbstractButton.IconOnly
                         icon.source: "qrc:/icons/trash.svg"
-                        icon.width: 24
-                        icon.height: 24
+                        icon.width: 34
+                        icon.height: 34
+                        padding: 11
                         Accessible.name: "Удалить место " + name
                         onClicked: {
                             venuesModel.remove(index)

@@ -185,19 +185,10 @@ Page {
                         }
                     }
 
-                    IconAction {
+                    ImageAction {
                         objectName: "friendTaxiButton"
-                        Layout.preferredWidth: 56
-                        Layout.minimumWidth: 56
-                        Layout.maximumWidth: 56
-                        Layout.preferredHeight: 56
-                        Layout.minimumHeight: 56
-                        display: AbstractButton.IconOnly
                         icon.source: "qrc:/icons/taxi.png"
-                        icon.color: "transparent"
-                        icon.width: 48
-                        icon.height: 48
-                        padding: 4
+                        imageClipRect: Qt.rect(62, 69, 1131, 1115)
                         Accessible.name: "Вызвать такси к " + name
                         ToolTip.visible: hovered
                         ToolTip.text: "Вызвать такси"
@@ -216,6 +207,7 @@ Page {
                         Layout.maximumWidth: 56
                         Layout.preferredHeight: 56
                         Layout.minimumHeight: 56
+                        Layout.maximumHeight: 56
                         display: AbstractButton.IconOnly
                         icon.source: "qrc:/icons/route.svg"
                         icon.width: 34
@@ -232,14 +224,10 @@ Page {
                                 toast.show("Не удалось открыть карты")
                         }
                     }
-                    IconAction {
+                    ImageAction {
                         objectName: "friendDetailsButton"
-                        display: AbstractButton.IconOnly
                         icon.source: "qrc:/icons/edit.png"
-                        icon.color: "transparent"
-                        icon.width: 36
-                        icon.height: 36
-                        padding: 6
+                        imageClipRect: Qt.rect(96, 99, 1344, 1338)
                         Accessible.name: friendCard.expanded ? "Свернуть карточку" : "Раскрыть карточку"
                         onClicked: friendCard.expanded = !friendCard.expanded
                     }
